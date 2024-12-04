@@ -34,8 +34,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+        }
         release {
-            isMinifyEnabled = false
+            isShrinkResources = true
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -81,8 +86,13 @@ dependencies {
     implementation(libs.accompanistDrawablePainter)
 
     implementation(libs.material)
+    implementation(libs.okhttp)
     implementation(libs.ktorClientCore)
     implementation(libs.ktorClientOkhttp)
+
+    debugImplementation(libs.okhttpLoggingInterceptor)
+    debugImplementation(libs.leakcanary)
+    debugImplementation(libs.bundles.flipper)
 
     testImplementation(libs.junit)
 

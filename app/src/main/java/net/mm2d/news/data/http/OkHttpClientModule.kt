@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
@@ -19,9 +20,24 @@ import javax.inject.Singleton
 class OkHttpClientModule {
     @Singleton
     @Provides
-    fun provideOkHttpClient(): OkHttpClient =
-        OkHttpClient.Builder()
-            .followRedirects(true)
-            .followSslRedirects(true)
-            .build()
+    fun provideOkHttpClient(
+        interceptorBridge: OkHttpInterceptorBridge,
+    ): OkHttpClient = OkHttpClient.Builder()
+        .followRedirects(true)
+        .followSslRedirects(true)
+        .addNetworkInterceptors(interceptorBridge.networkInterceptors())
+        .addInterceptors(interceptorBridge.interceptors())
+        .build()
+
+    private fun OkHttpClient.Builder.addNetworkInterceptors(
+        interceptors: List<Interceptor>,
+    ): OkHttpClient.Builder = apply {
+        interceptors.forEach { addNetworkInterceptor(it) }
+    }
+
+    private fun OkHttpClient.Builder.addInterceptors(
+        interceptors: List<Interceptor>,
+    ): OkHttpClient.Builder = apply {
+        interceptors.forEach { addInterceptor(it) }
+    }
 }
