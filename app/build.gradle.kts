@@ -14,7 +14,7 @@ plugins {
     // for release
 }
 
-val applicationName = "AIOI"
+val applicationName = "AIOI-News"
 val versionMajor = 0
 val versionMinor = 0
 val versionPatch = 1
