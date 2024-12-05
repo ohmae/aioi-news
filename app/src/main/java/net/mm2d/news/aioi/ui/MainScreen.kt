@@ -54,12 +54,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.launch
@@ -111,24 +113,6 @@ private fun DrawerContent(
         Spacer(modifier = Modifier.height(24.dp))
         LazyColumn {
             item {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.menu_version),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = BuildConfig.VERSION_NAME,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                HorizontalDivider()
-            }
-            item {
                 Text(
                     text = stringResource(id = R.string.menu_license),
                     style = MaterialTheme.typography.titleMedium,
@@ -170,11 +154,30 @@ private fun DrawerContent(
                 )
                 HorizontalDivider()
             }
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.menu_version),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = BuildConfig.VERSION_NAME,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+                HorizontalDivider()
+            }
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = "Copyright © 2024 大前良介 (OHMAE Ryosuke)",
-            style = MaterialTheme.typography.labelSmall,
+            text = stringResource(id = R.string.copyright),
+            color = Color(0x60808080),
+            fontSize = 8.sp,
             textAlign = TextAlign.End,
             modifier = Modifier
                 .fillMaxWidth()
