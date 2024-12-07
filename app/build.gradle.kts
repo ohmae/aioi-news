@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.kotlinxSerializationCore)
+    implementation(libs.kotlinxSerializationJson)
     implementation(libs.kotlinxDatetime)
     implementation(libs.hiltAndroid)
     ksp(libs.hiltAndroidCompiler)

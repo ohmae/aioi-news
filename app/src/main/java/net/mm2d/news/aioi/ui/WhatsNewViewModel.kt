@@ -17,7 +17,7 @@ import net.mm2d.news.core.RssRepository
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class WhatsNewViewModel @Inject constructor(
     private val rssRepository: RssRepository,
 ) : ViewModel() {
     fun feedStream(): StateFlow<RssFeed> = rssRepository.getStream(URL)
