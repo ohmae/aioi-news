@@ -5,13 +5,13 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.news.data.converter
+package net.mm2d.news.data.rss.converter
 
 import kotlinx.datetime.Clock.System
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssItem
-import net.mm2d.news.data.database.RssFeedEntity
-import net.mm2d.news.data.database.RssItemEntity
+import net.mm2d.news.data.rss.database.RssFeedEntity
+import net.mm2d.news.data.rss.database.RssItemEntity
 
 fun RssFeed.toRssFeedEntity(): RssFeedEntity =
     RssFeedEntity(

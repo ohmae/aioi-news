@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.news.data.database
+package net.mm2d.news.data.rss.database
 
 import android.content.Context
 import androidx.room.Room

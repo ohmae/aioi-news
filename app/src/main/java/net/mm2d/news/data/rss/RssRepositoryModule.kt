@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.news.data
+package net.mm2d.news.data.rss
 
 import dagger.Module
 import dagger.Provides
@@ -13,7 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import net.mm2d.news.core.RssRepository
-import net.mm2d.news.data.database.RssDatabase
+import net.mm2d.news.data.rss.database.RssDatabase
 import javax.inject.Singleton
 
 @Module

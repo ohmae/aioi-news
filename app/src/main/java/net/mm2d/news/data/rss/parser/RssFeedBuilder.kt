@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.news.data.parser
+package net.mm2d.news.data.rss.parser
 
 class RssFeedBuilder(
     val url: String,

@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/MIT
  */
 
-package net.mm2d.news.data
+package net.mm2d.news.data.rss
 
 import android.util.Log
 import io.ktor.client.HttpClient
@@ -24,13 +24,13 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssRepository
-import net.mm2d.news.data.converter.toRssFeed
-import net.mm2d.news.data.converter.toRssFeedEntity
-import net.mm2d.news.data.converter.toRssItemEntities
-import net.mm2d.news.data.converter.toRssItems
-import net.mm2d.news.data.database.RssDao
-import net.mm2d.news.data.database.RssDatabase
-import net.mm2d.news.data.parser.RssParser
+import net.mm2d.news.data.rss.converter.toRssFeed
+import net.mm2d.news.data.rss.converter.toRssFeedEntity
+import net.mm2d.news.data.rss.converter.toRssItemEntities
+import net.mm2d.news.data.rss.converter.toRssItems
+import net.mm2d.news.data.rss.database.RssDao
+import net.mm2d.news.data.rss.database.RssDatabase
+import net.mm2d.news.data.rss.parser.RssParser
 import kotlin.time.Duration.Companion.minutes
 
 class RssRepositoryImpl(
