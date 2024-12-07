@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -39,7 +38,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -54,20 +52,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import net.mm2d.news.aioi.BuildConfig
-import net.mm2d.news.aioi.Constants
 import net.mm2d.news.aioi.R
 import net.mm2d.news.aioi.util.Launcher
 import net.mm2d.news.aioi.util.doOnStop
@@ -96,93 +89,6 @@ fun MainScreen(
         ) { innerPadding ->
             Contents(modifier = Modifier.padding(innerPadding))
         }
-    }
-}
-
-@Composable
-private fun DrawerContent(
-    drawerState: DrawerState,
-    navigateToLicense: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-    ModalDrawerSheet(
-        modifier = modifier,
-    ) {
-        Spacer(modifier = Modifier.height(24.dp))
-        LazyColumn {
-            item {
-                Text(
-                    text = stringResource(id = R.string.menu_license),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier
-                        .clickable {
-                            navigateToLicense()
-                            scope.launch { drawerState.close() }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                )
-                HorizontalDivider()
-            }
-            item {
-                Text(
-                    text = stringResource(id = R.string.menu_privacy_policy),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier
-                        .clickable {
-                            Launcher.openCustomTabs(context, Constants.PRIVACY_POLICY_URL)
-                            scope.launch { drawerState.close() }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                )
-                HorizontalDivider()
-            }
-            item {
-                Text(
-                    text = stringResource(id = R.string.menu_play_store),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier
-                        .clickable {
-                            Launcher.openGooglePlay(context, Constants.PACKAGE_NAME)
-                            scope.launch { drawerState.close() }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                )
-                HorizontalDivider()
-            }
-            item {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.menu_version),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = BuildConfig.VERSION_NAME,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-                HorizontalDivider()
-            }
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = stringResource(id = R.string.copyright),
-            color = Color(0x60808080),
-            fontSize = 8.sp,
-            textAlign = TextAlign.End,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 24.dp, bottom = 8.dp),
-        )
     }
 }
 
@@ -302,7 +208,11 @@ private fun ItemContent(
             if (isNew) {
                 Text(
                     text = "NEW",
-                    style = MaterialTheme.typography.labelSmall.copy(fontSize = with(LocalDensity.current) { 8.dp.toSp() }),
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontSize = with(LocalDensity.current) {
+                            8.dp.toSp()
+                        },
+                    ),
                     color = MaterialTheme.colorScheme.onError,
                     modifier = Modifier
                         .padding(end = 4.dp)
