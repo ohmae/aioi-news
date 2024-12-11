@@ -51,17 +51,18 @@ class DebugApp : App() {
         StrictMode.setVmPolicy(VmPolicy.Builder().detectDefault().penaltyLog().build())
     }
 
-    private fun VmPolicy.Builder.detectDefault(): VmPolicy.Builder = apply {
-        detectActivityLeaks()
-        detectLeakedClosableObjects()
-        detectLeakedRegistrationObjects()
-        detectFileUriExposure()
-        detectCleartextNetwork()
-        detectContentUriWithoutPermission()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            detectCredentialProtectedWhileLocked()
+    private fun VmPolicy.Builder.detectDefault(): VmPolicy.Builder =
+        apply {
+            detectActivityLeaks()
+            detectLeakedClosableObjects()
+            detectLeakedRegistrationObjects()
+            detectFileUriExposure()
+            detectCleartextNetwork()
+            detectContentUriWithoutPermission()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                detectCredentialProtectedWhileLocked()
+            }
         }
-    }
 
     private fun setUpOkHttp() {
         okHttpInterceptorBridge.addInterceptor(

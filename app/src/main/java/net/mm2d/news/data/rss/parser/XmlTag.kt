@@ -12,5 +12,7 @@ data class XmlTag(
     val localName: String,
 )
 
-fun XmlTag?.matches(uri: String, localName: String): Boolean =
-    this != null && this.uri == uri && this.localName == localName
+fun XmlTag?.matches(
+    uri: String,
+    localName: String,
+): Boolean = this != null && this.uri == uri && this.localName == localName

@@ -92,11 +92,14 @@ private fun Toolbar(
     )
 }
 
-private fun setUpWebView(context: Context): WebView =
-    NestedScrollingWebView(context).also { setUp(it) }
+private fun setUpWebView(
+    context: Context,
+): WebView = NestedScrollingWebView(context).also { setUp(it) }
 
 @SuppressLint("SetJavaScriptEnabled")
-private fun setUp(webView: WebView) {
+private fun setUp(
+    webView: WebView,
+) {
     webView.settings.let {
         it.setSupportZoom(false)
         it.displayZoomControls = false
@@ -111,14 +114,19 @@ private fun setUp(webView: WebView) {
             return Launcher.openCustomTabs(view.context, request.url)
         }
 
-        override fun onPageFinished(view: WebView, url: String) {
+        override fun onPageFinished(
+            view: WebView,
+            url: String,
+        ) {
             setTheme(view)
         }
     }
     webView.loadUrl("file:///android_asset/license.html")
 }
 
-private fun setTheme(webView: WebView) {
+private fun setTheme(
+    webView: WebView,
+) {
     val context = webView.context
     val theme = JSONObject().also {
         it.put("backgroundPrimary", context.attrToHtmlColor(MR.attr.colorSurfaceContainerLow))
@@ -132,5 +140,6 @@ private fun setTheme(webView: WebView) {
     webView.evaluateJavascript("setTheme($theme)") {}
 }
 
-private fun Context.attrToHtmlColor(@AttrRes attr: Int): String =
-    "#%06X".format(resolveColor(attr) and 0xFFFFFF)
+private fun Context.attrToHtmlColor(
+    @AttrRes attr: Int,
+): String = "#%06X".format(resolveColor(attr) and 0xFFFFFF)

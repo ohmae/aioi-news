@@ -13,7 +13,9 @@ import org.xml.sax.Attributes
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 
-class AtomHandler(url: String) : RssHandler {
+class AtomHandler(
+    url: String,
+) : RssHandler {
     private val path: XmlPath = XmlPath()
     private val builder = RssFeedBuilder(url)
     private val itemBuilders: MutableList<RssItemBuilder> = mutableListOf()
@@ -53,7 +55,12 @@ class AtomHandler(url: String) : RssHandler {
         )
     }
 
-    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+    override fun startElement(
+        uri: String,
+        localName: String,
+        qName: String,
+        attributes: Attributes,
+    ) {
         if (localName == "feed" && uri == NS_ATOM_03) {
             nameSpaceAtom = uri
         }
@@ -87,7 +94,11 @@ class AtomHandler(url: String) : RssHandler {
         }
     }
 
-    override fun endElement(uri: String, localName: String, qName: String) {
+    override fun endElement(
+        uri: String,
+        localName: String,
+        qName: String,
+    ) {
         val tag = path.pop()
         if (path.getOrNull(0).matches(nameSpaceAtom, "feed") &&
             tag.matches(nameSpaceAtom, "entry")
@@ -99,7 +110,11 @@ class AtomHandler(url: String) : RssHandler {
         }
     }
 
-    override fun characters(ch: CharArray, start: Int, length: Int) {
+    override fun characters(
+        ch: CharArray,
+        start: Int,
+        length: Int,
+    ) {
         val tag = path.getOrNull(0) ?: return
         val text = String(ch, start, length).trim()
         if (text.isEmpty()) return
@@ -132,7 +147,9 @@ class AtomHandler(url: String) : RssHandler {
         }
     }
 
-    private fun parseDate(text: String): Long =
+    private fun parseDate(
+        text: String,
+    ): Long =
         try {
             OffsetDateTime.parse(text).toInstant().toEpochMilli()
         } catch (e: DateTimeParseException) {

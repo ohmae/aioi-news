@@ -21,7 +21,10 @@ class RssParser {
         return factory.newSAXParser()
     }
 
-    fun parse(url: String, bytes: ByteArray): RssFeed? =
+    fun parse(
+        url: String,
+        bytes: ByteArray,
+    ): RssFeed? =
         MediatorHandler(url).also {
             createSaxParser().parse(bytes.inputStream(), it)
         }.getFeed()
@@ -39,7 +42,12 @@ class RssParser {
         override fun endDocument() {
         }
 
-        override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+        override fun startElement(
+            uri: String,
+            localName: String,
+            qName: String,
+            attributes: Attributes,
+        ) {
             if (handler == null) {
                 handler = when (localName) {
                     "RDF" -> Rss1Handler(url)
@@ -51,11 +59,19 @@ class RssParser {
             handler?.startElement(uri, localName, qName, attributes)
         }
 
-        override fun endElement(uri: String, localName: String, qName: String) {
+        override fun endElement(
+            uri: String,
+            localName: String,
+            qName: String,
+        ) {
             handler?.endElement(uri, localName, qName)
         }
 
-        override fun characters(ch: CharArray, start: Int, length: Int) {
+        override fun characters(
+            ch: CharArray,
+            start: Int,
+            length: Int,
+        ) {
             handler?.characters(ch, start, length)
         }
     }

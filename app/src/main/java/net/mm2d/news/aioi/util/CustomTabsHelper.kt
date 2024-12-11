@@ -34,12 +34,16 @@ object CustomTabsHelper : CustomTabsServiceConnection() {
     var packageNameToBind: String? = null
         private set
 
-    private fun findPackageNameToUse(context: Context): String? {
+    private fun findPackageNameToUse(
+        context: Context,
+    ): String? {
         packageNameToBind = findPackageNameToUseInner(context)
         return packageNameToBind
     }
 
-    private fun findPackageNameToUseInner(context: Context): String? {
+    private fun findPackageNameToUseInner(
+        context: Context,
+    ): String? {
         val browsers = OpenUriUtils.getBrowserPackages(context)
         val candidate = context.packageManager
             .queryIntentServicesCompat(
@@ -67,7 +71,9 @@ object CustomTabsHelper : CustomTabsServiceConnection() {
     var session: CustomTabsSession? = null
         private set
 
-    fun initialize(application: Application) {
+    fun initialize(
+        application: Application,
+    ) {
         CustomTabsHelper.application = application
         ProcessLifecycleOwner.get()
             .lifecycle
@@ -89,21 +95,30 @@ object CustomTabsHelper : CustomTabsServiceConnection() {
         }
     }
 
-    override fun onCustomTabsServiceConnected(name: ComponentName, client: CustomTabsClient) {
+    override fun onCustomTabsServiceConnected(
+        name: ComponentName,
+        client: CustomTabsClient,
+    ) {
         client.warmup(0)
         session = client.newSession(CustomTabsCallback())
     }
 
-    override fun onServiceDisconnected(name: ComponentName) {
+    override fun onServiceDisconnected(
+        name: ComponentName,
+    ) {
         session = null
     }
 
     class CustomTabsBinder : DefaultLifecycleObserver {
-        override fun onStart(owner: LifecycleOwner) {
+        override fun onStart(
+            owner: LifecycleOwner,
+        ) {
             bind()
         }
 
-        override fun onStop(owner: LifecycleOwner) {
+        override fun onStop(
+            owner: LifecycleOwner,
+        ) {
             unbind()
         }
     }

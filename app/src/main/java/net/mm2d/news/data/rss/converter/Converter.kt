@@ -23,7 +23,9 @@ fun RssFeed.toRssFeedEntity(): RssFeedEntity =
         fetched = System.now().toEpochMilliseconds(),
     )
 
-fun RssFeed.toRssItemEntities(currentItems: List<RssItem>): List<RssItemEntity> {
+fun RssFeed.toRssItemEntities(
+    currentItems: List<RssItem>,
+): List<RssItemEntity> {
     val currentItemMap = currentItems.associateBy { it.id }
     return items.map { item ->
         val current = currentItemMap[item.id]
@@ -43,7 +45,9 @@ fun RssFeed.toRssItemEntities(currentItems: List<RssItem>): List<RssItemEntity> 
     }
 }
 
-fun RssFeedEntity.toRssFeed(items: List<RssItem>): RssFeed =
+fun RssFeedEntity.toRssFeed(
+    items: List<RssItem>,
+): RssFeed =
     RssFeed(
         url = url,
         title = title,

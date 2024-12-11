@@ -24,8 +24,9 @@ class RssRepositoryModule {
     fun provideRssRepository(
         client: HttpClient,
         database: RssDatabase,
-    ): RssRepository = RssRepositoryImpl(
-        client = client,
-        database = database,
-    )
+    ): RssRepository =
+        RssRepositoryImpl(
+            client = client,
+            database = database,
+        )
 }

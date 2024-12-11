@@ -22,7 +22,9 @@ class WhatsNewViewModel @Inject constructor(
 ) : ViewModel() {
     fun feedStream(): StateFlow<RssFeed> = rssRepository.getStream(URL)
 
-    fun visit(id: String) {
+    fun visit(
+        id: String,
+    ) {
         viewModelScope.launch {
             rssRepository.visit(URL, id)
         }

@@ -9,7 +9,10 @@ package net.mm2d.news.data.rss.parser
 
 class XmlPath {
     private val path: ArrayDeque<XmlTag> = ArrayDeque()
-    fun push(uri: String, localName: String) {
+    fun push(
+        uri: String,
+        localName: String,
+    ) {
         path.addLast(XmlTag(uri, localName))
     }
 
@@ -18,5 +21,7 @@ class XmlPath {
         return path.removeLast()
     }
 
-    fun getOrNull(index: Int): XmlTag? = path.getOrNull(path.lastIndex - index)
+    fun getOrNull(
+        index: Int,
+    ): XmlTag? = path.getOrNull(path.lastIndex - index)
 }

@@ -22,22 +22,25 @@ class OkHttpClientModule {
     @Provides
     fun provideOkHttpClient(
         interceptorBridge: OkHttpInterceptorBridge,
-    ): OkHttpClient = OkHttpClient.Builder()
-        .followRedirects(true)
-        .followSslRedirects(true)
-        .addNetworkInterceptors(interceptorBridge.networkInterceptors())
-        .addInterceptors(interceptorBridge.interceptors())
-        .build()
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .followRedirects(true)
+            .followSslRedirects(true)
+            .addNetworkInterceptors(interceptorBridge.networkInterceptors())
+            .addInterceptors(interceptorBridge.interceptors())
+            .build()
 
     private fun OkHttpClient.Builder.addNetworkInterceptors(
         interceptors: List<Interceptor>,
-    ): OkHttpClient.Builder = apply {
-        interceptors.forEach { addNetworkInterceptor(it) }
-    }
+    ): OkHttpClient.Builder =
+        apply {
+            interceptors.forEach { addNetworkInterceptor(it) }
+        }
 
     private fun OkHttpClient.Builder.addInterceptors(
         interceptors: List<Interceptor>,
-    ): OkHttpClient.Builder = apply {
-        interceptors.forEach { addInterceptor(it) }
-    }
+    ): OkHttpClient.Builder =
+        apply {
+            interceptors.forEach { addInterceptor(it) }
+        }
 }

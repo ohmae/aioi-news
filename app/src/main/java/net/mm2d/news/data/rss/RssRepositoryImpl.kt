@@ -43,7 +43,9 @@ class RssRepositoryImpl(
 
     private val streamMap: MutableMap<String, StateFlow<RssFeed>> = mutableMapOf()
 
-    override fun getStream(url: String): StateFlow<RssFeed> {
+    override fun getStream(
+        url: String,
+    ): StateFlow<RssFeed> {
         scope.launch {
             val now = Clock.System.now().toEpochMilliseconds()
             val feed = dao.getFeed(url)
@@ -54,7 +56,9 @@ class RssRepositoryImpl(
         return streamMap.getOrPut(url) { create(url) }
     }
 
-    private fun create(url: String): StateFlow<RssFeed> =
+    private fun create(
+        url: String,
+    ): StateFlow<RssFeed> =
         combineTransform(
             dao.getFeedFlow(url),
             dao.getItems(url),
@@ -66,7 +70,9 @@ class RssRepositoryImpl(
             initialValue = RssFeed.create("", url),
         )
 
-    private suspend fun update(url: String) {
+    private suspend fun update(
+        url: String,
+    ) {
         fetch(url).fold(
             onSuccess = { feed ->
                 val currentItems = streamMap[url]?.value?.items ?: emptyList()
@@ -80,17 +86,23 @@ class RssRepositoryImpl(
         )
     }
 
-    override suspend fun fetch(url: String): Result<RssFeed> = withContext(dispatcher) {
-        try {
-            val data = client.get(url).bodyAsBytes()
-            val result = RssParser().parse(url, data) ?: throw IllegalStateException("parse failed")
-            Result.success(result)
-        } catch (e: Exception) {
-            Result.failure(e)
+    override suspend fun fetch(
+        url: String,
+    ): Result<RssFeed> =
+        withContext(dispatcher) {
+            try {
+                val data = client.get(url).bodyAsBytes()
+                val result = RssParser().parse(url, data) ?: throw IllegalStateException("parse failed")
+                Result.success(result)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
         }
-    }
 
-    override suspend fun visit(url: String, id: String) {
+    override suspend fun visit(
+        url: String,
+        id: String,
+    ) {
         dao.visit(url, id, true)
     }
 

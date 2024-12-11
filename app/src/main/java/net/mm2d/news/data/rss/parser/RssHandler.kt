@@ -12,7 +12,20 @@ import org.xml.sax.Attributes
 
 interface RssHandler {
     fun getFeed(): RssFeed?
-    fun startElement(uri: String, localName: String, qName: String, attributes: Attributes)
-    fun endElement(uri: String, localName: String, qName: String)
-    fun characters(ch: CharArray, start: Int, length: Int)
+    fun startElement(
+        uri: String,
+        localName: String,
+        qName: String,
+        attributes: Attributes,
+    )
+    fun endElement(
+        uri: String,
+        localName: String,
+        qName: String,
+    )
+    fun characters(
+        ch: CharArray,
+        start: Int,
+        length: Int,
+    )
 }

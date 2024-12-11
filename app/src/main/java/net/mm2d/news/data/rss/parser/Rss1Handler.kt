@@ -13,7 +13,9 @@ import org.xml.sax.Attributes
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 
-class Rss1Handler(url: String) : RssHandler {
+class Rss1Handler(
+    url: String,
+) : RssHandler {
     private val path: XmlPath = XmlPath()
     private val builder = RssFeedBuilder(url)
     private val itemBuilders: MutableMap<String, RssItemBuilder> = LinkedHashMap()
@@ -48,7 +50,12 @@ class Rss1Handler(url: String) : RssHandler {
         )
     }
 
-    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+    override fun startElement(
+        uri: String,
+        localName: String,
+        qName: String,
+        attributes: Attributes,
+    ) {
         path.push(uri, localName)
         if (path.getOrNull(3).matches(NS_RSS, "channel") &&
             path.getOrNull(2).matches(NS_RSS, "items") &&
@@ -68,14 +75,22 @@ class Rss1Handler(url: String) : RssHandler {
         }
     }
 
-    override fun endElement(uri: String, localName: String, qName: String) {
+    override fun endElement(
+        uri: String,
+        localName: String,
+        qName: String,
+    ) {
         path.pop()
         if (localName == "item") {
             workItem = null
         }
     }
 
-    override fun characters(ch: CharArray, start: Int, length: Int) {
+    override fun characters(
+        ch: CharArray,
+        start: Int,
+        length: Int,
+    ) {
         val tag = path.getOrNull(0) ?: return
         val text = String(ch, start, length).trim()
         if (text.isEmpty()) return
@@ -101,7 +116,9 @@ class Rss1Handler(url: String) : RssHandler {
         }
     }
 
-    private fun parseDate(text: String): Long =
+    private fun parseDate(
+        text: String,
+    ): Long =
         try {
             OffsetDateTime.parse(text).toInstant().toEpochMilli()
         } catch (e: DateTimeParseException) {

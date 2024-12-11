@@ -10,7 +10,14 @@ package net.mm2d.news.core
 import kotlinx.coroutines.flow.StateFlow
 
 interface RssRepository {
-    fun getStream(url: String): StateFlow<RssFeed>
-    suspend fun visit(url: String, id: String)
-    suspend fun fetch(url: String): Result<RssFeed>
+    fun getStream(
+        url: String,
+    ): StateFlow<RssFeed>
+    suspend fun visit(
+        url: String,
+        id: String,
+    )
+    suspend fun fetch(
+        url: String,
+    ): Result<RssFeed>
 }

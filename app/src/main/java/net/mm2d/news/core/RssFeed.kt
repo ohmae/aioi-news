@@ -16,7 +16,10 @@ data class RssFeed(
     val items: List<RssItem>,
 ) {
     companion object {
-        fun create(title: String, url: String) = RssFeed(
+        fun create(
+            title: String,
+            url: String,
+        ) = RssFeed(
             url = url,
             title = title,
             description = "",

@@ -14,7 +14,9 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-class Rss2Handler(url: String) : RssHandler {
+class Rss2Handler(
+    url: String,
+) : RssHandler {
     private val path: XmlPath = XmlPath()
     private val builder = RssFeedBuilder(url)
     private val itemBuilders: MutableList<RssItemBuilder> = mutableListOf()
@@ -49,7 +51,12 @@ class Rss2Handler(url: String) : RssHandler {
         )
     }
 
-    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
+    override fun startElement(
+        uri: String,
+        localName: String,
+        qName: String,
+        attributes: Attributes,
+    ) {
         path.push(uri, localName)
         if (path.getOrNull(1).matches("", "channel") &&
             path.getOrNull(0).matches("", "item")
@@ -58,7 +65,11 @@ class Rss2Handler(url: String) : RssHandler {
         }
     }
 
-    override fun endElement(uri: String, localName: String, qName: String) {
+    override fun endElement(
+        uri: String,
+        localName: String,
+        qName: String,
+    ) {
         val tag = path.pop()
         if (path.getOrNull(0).matches("", "channel") &&
             tag.matches("", "item")
@@ -70,7 +81,11 @@ class Rss2Handler(url: String) : RssHandler {
         }
     }
 
-    override fun characters(ch: CharArray, start: Int, length: Int) {
+    override fun characters(
+        ch: CharArray,
+        start: Int,
+        length: Int,
+    ) {
         val tag = path.getOrNull(0) ?: return
         val text = String(ch, start, length).trim()
         if (text.isEmpty()) return
@@ -120,7 +135,9 @@ class Rss2Handler(url: String) : RssHandler {
         }
     }
 
-    private fun parseDate(text: String): Long =
+    private fun parseDate(
+        text: String,
+    ): Long =
         try {
             OffsetDateTime.parse(text, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant().toEpochMilli()
         } catch (e: DateTimeParseException) {

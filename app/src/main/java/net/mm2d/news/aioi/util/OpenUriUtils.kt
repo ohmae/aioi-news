@@ -17,7 +17,9 @@ object OpenUriUtils {
     private var defaultBrowserPackage: String? = null
     private var browserPackages: Set<String>? = null
 
-    fun getBrowserPackages(context: Context): Set<String> {
+    fun getBrowserPackages(
+        context: Context,
+    ): Set<String> {
         browserPackages?.let {
             return it
         }
@@ -26,7 +28,9 @@ object OpenUriUtils {
         }
     }
 
-    private fun getBrowserPackagesInner(context: Context): Set<String> {
+    private fun getBrowserPackagesInner(
+        context: Context,
+    ): Set<String> {
         val flags = PackageManager.MATCH_ALL or PackageManager.MATCH_DEFAULT_ONLY
         return context.packageManager
             .queryIntentActivitiesCompat(makeBrowserTestIntent(), flags)
@@ -34,7 +38,9 @@ object OpenUriUtils {
             .toSet()
     }
 
-    fun getDefaultBrowserPackage(context: Context): String? {
+    fun getDefaultBrowserPackage(
+        context: Context,
+    ): String? {
         defaultBrowserPackage?.let {
             return it
         }
@@ -43,7 +49,9 @@ object OpenUriUtils {
         }
     }
 
-    private fun getDefaultBrowserPackageInner(context: Context): String? {
+    private fun getDefaultBrowserPackageInner(
+        context: Context,
+    ): String? {
         val packageName = context.packageManager
             .resolveActivityCompat(makeBrowserTestIntent(), PackageManager.MATCH_DEFAULT_ONLY)
             ?.activityInfo

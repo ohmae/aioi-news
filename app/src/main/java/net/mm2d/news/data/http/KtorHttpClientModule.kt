@@ -23,7 +23,8 @@ class KtorHttpClientModule {
     @Provides
     fun provideKtorHttpClient(
         okHttpClient: OkHttpClient,
-    ): HttpClient = HttpClient(OkHttp) {
-        engine { preconfigured = okHttpClient }
-    }
+    ): HttpClient =
+        HttpClient(OkHttp) {
+            engine { preconfigured = okHttpClient }
+        }
 }

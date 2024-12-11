@@ -24,7 +24,8 @@ class LinkRepositoryModule {
     fun provideLinkRepository(
         @ApplicationContext
         context: Context,
-    ): LinkRepository = LinkRepositoryImpl(
-        context = context,
-    )
+    ): LinkRepository =
+        LinkRepositoryImpl(
+            context = context,
+        )
 }
