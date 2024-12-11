@@ -7,6 +7,7 @@
 
 package net.mm2d.news.aioi.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -44,7 +45,12 @@ import net.mm2d.news.aioi.R
 fun MainScreen(
     navigateToLicense: () -> Unit = {},
 ) {
+    val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    BackHandler(
+        enabled = drawerState.isOpen,
+        onBack = { scope.launch { drawerState.close() } },
+    )
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
@@ -55,7 +61,6 @@ fun MainScreen(
             )
         },
     ) {
-        val scope = rememberCoroutineScope()
         val pagerState = rememberPagerState(pageCount = { 2 })
         Scaffold(
             modifier = Modifier.fillMaxSize(),
