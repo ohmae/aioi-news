@@ -30,7 +30,6 @@ android {
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "$versionMajor.$versionMinor.$versionPatch"
         base.archivesName.set("$applicationName-$versionName")
-        multiDexEnabled = true
     }
 
     buildTypes {
