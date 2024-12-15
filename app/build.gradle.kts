@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.gradleVersions)
     alias(libs.plugins.dependencyGuard)
 
+    alias(libs.plugins.baselineProfile)
+
     // for release
 }
 
@@ -51,7 +53,6 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        compose = true
         buildConfig = true
     }
 }
@@ -95,6 +96,9 @@ dependencies {
     debugImplementation(libs.bundles.flipper)
 
     testImplementation(libs.junit)
+
+    implementation(libs.profileInstaller)
+    baselineProfile(projects.baselineProfile)
 
     // for release
 }

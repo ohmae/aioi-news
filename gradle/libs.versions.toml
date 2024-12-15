@@ -27,6 +27,7 @@ okhttp = "4.12.0"
 
 # test
 junit = "4.13.2"
+androidxJunit = "1.2.1"
 
 # debug
 leakcanary = "2.14"
@@ -34,6 +35,13 @@ flipper = "0.273.0"
 soloader = "0.12.1"
 
 ktlint = "1.5.0"
+
+espressoCore = "3.6.1"
+uiAutomator = "2.3.0"
+benchmarkMacroJunit4 = "1.3.3"
+baselineProfile = "1.3.3"
+profileInstaller = "1.4.1"
+testRule = "1.6.1"
 
 # for release
 
@@ -73,6 +81,13 @@ ktorClientOkhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor"
 
 # test
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidxJunit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
+
+espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+uiAutomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiAutomator" }
+benchmarkMacroJunit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+profileInstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileInstaller" }
+testRule = { group = "androidx.test", name = "rules", version.ref = "testRule" }
 
 # debug
 okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
@@ -96,6 +111,9 @@ hilt = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
 dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
+
+androidTest = { id = "com.android.test", version.ref = "agp" }
+baselineProfile = { id = "androidx.baselineprofile", version.ref = "baselineProfile" }
 
 # for release
 

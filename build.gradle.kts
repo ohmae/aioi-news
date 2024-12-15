@@ -9,6 +9,9 @@ plugins {
     alias(libs.plugins.gradleVersions) apply false
     alias(libs.plugins.dependencyGuard) apply false
 
+    alias(libs.plugins.androidTest) apply false
+    alias(libs.plugins.baselineProfile) apply false
+
     // for release
 }
 

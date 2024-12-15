@@ -34,5 +34,8 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "AIOI-News"
 include(":app")
+include(":baseline-profile")
