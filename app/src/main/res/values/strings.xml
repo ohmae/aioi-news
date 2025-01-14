@@ -5,7 +5,6 @@
     <string name="menu_license">オープンソースライセンス</string>
     <string name="menu_privacy_policy">プライバシーポリシー</string>
     <string name="menu_github">Github</string>
-    <string name="copyright">Copyright © 2024 大前良介 (OHMAE Ryosuke)</string>
     <string name="title_whats_new">新着情報</string>
     <string name="title_links">リンク集</string>
 </resources>

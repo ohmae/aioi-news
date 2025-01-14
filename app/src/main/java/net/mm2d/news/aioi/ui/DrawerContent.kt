@@ -22,12 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import net.mm2d.news.aioi.BuildConfig
 import net.mm2d.news.aioi.Constants
@@ -108,15 +105,5 @@ fun DrawerContent(
                 HorizontalDivider()
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = stringResource(id = R.string.copyright),
-            color = Color(0x60808080),
-            fontSize = 8.sp,
-            textAlign = TextAlign.End,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 24.dp, bottom = 8.dp),
-        )
     }
 }
