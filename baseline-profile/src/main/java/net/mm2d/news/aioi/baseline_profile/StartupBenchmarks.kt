@@ -26,14 +26,14 @@ class StartupBenchmarks {
     val rule = MacrobenchmarkRule()
 
     @Test
-    fun startupCompilationNone() =
-        benchmark(CompilationMode.None())
+    fun startupCompilationNone() = benchmark(CompilationMode.None())
 
     @Test
-    fun startupCompilationBaselineProfiles() =
-        benchmark(CompilationMode.Partial(BaselineProfileMode.Require))
+    fun startupCompilationBaselineProfiles() = benchmark(CompilationMode.Partial(BaselineProfileMode.Require))
 
-    private fun benchmark(compilationMode: CompilationMode) {
+    private fun benchmark(
+        compilationMode: CompilationMode,
+    ) {
         rule.measureRepeated(
             packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
                 ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
@@ -46,7 +46,7 @@ class StartupBenchmarks {
             },
             measureBlock = {
                 startActivityAndWait()
-            }
+            },
         )
     }
 }

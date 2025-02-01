@@ -18,11 +18,13 @@ interface RssHandler {
         qName: String,
         attributes: Attributes,
     )
+
     fun endElement(
         uri: String,
         localName: String,
         qName: String,
     )
+
     fun characters(
         ch: CharArray,
         start: Int,

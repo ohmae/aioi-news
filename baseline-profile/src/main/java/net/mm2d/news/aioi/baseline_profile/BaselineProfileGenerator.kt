@@ -26,7 +26,7 @@ class BaselineProfileGenerator {
         rule.collect(
             packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
                 ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
-            includeInStartupProfile = true
+            includeInStartupProfile = true,
         ) {
             pressHome()
             startActivityAndWait()
