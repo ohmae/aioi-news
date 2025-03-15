@@ -21,6 +21,7 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -88,6 +89,7 @@ fun DrawerContent(
             }
             item {
                 Row(
+                    verticalAlignment = Alignment.Bottom,
                     modifier = Modifier
                         .padding(horizontal = 24.dp, vertical = 12.dp)
                         .fillMaxWidth(),
@@ -99,7 +101,7 @@ fun DrawerContent(
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = BuildConfig.VERSION_NAME,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
                 HorizontalDivider()
