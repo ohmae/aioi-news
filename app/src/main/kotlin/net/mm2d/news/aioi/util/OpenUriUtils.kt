@@ -10,7 +10,7 @@ package net.mm2d.news.aioi.util
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
+import androidx.core.net.toUri
 
 object OpenUriUtils {
     private const val EXAMPLE_URL = "http://www.example.com/"
@@ -65,7 +65,7 @@ object OpenUriUtils {
     }
 
     private fun makeBrowserTestIntent(): Intent =
-        Intent(Intent.ACTION_VIEW, Uri.parse(EXAMPLE_URL)).also {
+        Intent(Intent.ACTION_VIEW, EXAMPLE_URL.toUri()).also {
             it.addCategory(Intent.CATEGORY_BROWSABLE)
         }
 }

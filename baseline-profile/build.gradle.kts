@@ -26,7 +26,7 @@ android {
         jvmTarget = "11"
     }
     targetProjectPath = ":app"
-    testOptions.managedDevices.devices {
+    testOptions.managedDevices.allDevices {
         @Suppress("UnstableApiUsage")
         create<ManagedVirtualDevice>("pixel9Api35") {
             device = "Pixel 9"
@@ -55,7 +55,7 @@ androidComponents {
         @Suppress("UnstableApiUsage")
         v.instrumentationRunnerArguments.put(
             "targetAppId",
-            v.testedApks.map { artifactsLoader.load(it)?.applicationId }
+            v.testedApks.map { artifactsLoader.load(it)!!.applicationId },
         )
     }
 }
