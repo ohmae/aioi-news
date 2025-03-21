@@ -22,6 +22,7 @@
 /.idea/runConfigurations.xml
 /.idea/sonarlint
 /.idea/workspace.xml
+/.idea/AndroidProjectSystem.xml
 /.kotlin
 /build
 /captures
