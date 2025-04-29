@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinCompose)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.androidxRoom)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kover)
     alias(libs.plugins.gradleVersions)
@@ -55,6 +56,10 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    room {
+        schemaDirectory("$projectDir/schemas")
+        generateKotlin = true
+    }
 }
 
 dependencies {
@@ -101,10 +106,6 @@ dependencies {
     baselineProfile(projects.baselineProfile)
 
     // for release
-}
-
-ksp {
-    arg("room.schemaLocation", File(projectDir, "schemas").path)
 }
 
 dependencyGuard {
