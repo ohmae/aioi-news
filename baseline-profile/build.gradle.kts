@@ -10,38 +10,41 @@ plugins {
 
 android {
     namespace = "net.mm2d.news.aioi.baseline_profile"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     targetProjectPath = ":app"
     testOptions.managedDevices.allDevices {
         @Suppress("UnstableApiUsage")
-        create<ManagedVirtualDevice>("pixel9Api35") {
+        create<ManagedVirtualDevice>("pixel9Api36") {
             device = "Pixel 9"
-            apiLevel = 35
+            apiLevel = 36
             systemImageSource = "google"
         }
     }
 }
 
 baselineProfile {
-    managedDevices += "pixel9Api35"
+    managedDevices += "pixel9Api36"
     useConnectedDevices = false
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugarJdkLibs)
+
     implementation(libs.androidxJunit)
     implementation(libs.espressoCore)
     implementation(libs.uiAutomator)

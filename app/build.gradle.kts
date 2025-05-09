@@ -24,12 +24,12 @@ val versionPatch = 5
 
 android {
     namespace = "net.mm2d.news.aioi"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "net.mm2d.news.aioi"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "$versionMajor.$versionMinor.$versionPatch"
         base.archivesName.set("$applicationName-$versionName")
@@ -49,6 +49,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "17"
