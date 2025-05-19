@@ -99,7 +99,6 @@ dependencies {
 
     debugImplementation(libs.okhttpLoggingInterceptor)
     debugImplementation(libs.leakcanary)
-    debugImplementation(libs.bundles.flipper)
 
     testImplementation(libs.junit)
 
