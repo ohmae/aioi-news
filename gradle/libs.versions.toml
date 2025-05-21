@@ -17,7 +17,7 @@ androidxLifecycle = "2.9.0"
 androidxActivity = "1.10.1"
 androidxBrowser = "1.8.0"
 androidxRoom = "2.7.1"
-androidxComposeBom = "2025.05.00"
+androidxComposeBom = "2025.05.01"
 androidxNavigation = "2.9.0"
 androidxHiltCompose = "1.2.0"
 accompanist = "0.37.3"
@@ -32,7 +32,7 @@ androidxJunit = "1.2.1"
 # debug
 leakcanary = "2.14"
 
-ktlint = "1.5.0"
+ktlint = "1.6.0"
 
 espressoCore = "3.6.1"
 uiAutomator = "2.3.0"
