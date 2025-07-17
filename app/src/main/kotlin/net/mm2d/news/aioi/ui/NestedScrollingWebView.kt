@@ -47,7 +47,7 @@ class NestedScrollingWebView
             MotionEvent.ACTION_MOVE -> onTouchMove(event)
             MotionEvent.ACTION_UP,
             MotionEvent.ACTION_CANCEL,
-                -> onTouchEnd()
+            -> onTouchEnd()
         }
         prevY = event.rawY
         return super.onTouchEvent(event)
