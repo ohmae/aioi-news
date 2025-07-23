@@ -44,13 +44,14 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import kotlinx.datetime.Clock
 import net.mm2d.news.aioi.R
 import net.mm2d.news.aioi.util.Launcher
 import net.mm2d.news.aioi.util.doOnStop
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssItem
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun WhatsNewPage(
@@ -117,6 +118,7 @@ private fun LazyItemScope.Item(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun ItemContent(
     item: RssItem,

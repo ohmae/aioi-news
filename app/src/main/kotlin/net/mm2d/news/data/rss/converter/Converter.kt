@@ -7,12 +7,14 @@
 
 package net.mm2d.news.data.rss.converter
 
-import kotlinx.datetime.Clock.System
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssItem
 import net.mm2d.news.data.rss.database.RssFeedEntity
 import net.mm2d.news.data.rss.database.RssItemEntity
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 fun RssFeed.toRssFeedEntity(): RssFeedEntity =
     RssFeedEntity(
         url = url,
@@ -20,7 +22,7 @@ fun RssFeed.toRssFeedEntity(): RssFeedEntity =
         description = description,
         link = link,
         imageUrl = imageUrl,
-        fetched = System.now().toEpochMilliseconds(),
+        fetched = Clock.System.now().toEpochMilliseconds(),
     )
 
 fun RssFeed.toRssItemEntities(

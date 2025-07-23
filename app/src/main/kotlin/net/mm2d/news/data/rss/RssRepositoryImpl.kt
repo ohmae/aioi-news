@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssRepository
 import net.mm2d.news.data.rss.converter.toRssFeed
@@ -31,7 +30,9 @@ import net.mm2d.news.data.rss.converter.toRssItems
 import net.mm2d.news.data.rss.database.RssDao
 import net.mm2d.news.data.rss.database.RssDatabase
 import net.mm2d.news.data.rss.parser.RssParser
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.ExperimentalTime
 
 class RssRepositoryImpl(
     private val client: HttpClient,
@@ -43,6 +44,7 @@ class RssRepositoryImpl(
 
     private val streamMap: MutableMap<String, StateFlow<RssFeed>> = mutableMapOf()
 
+    @OptIn(ExperimentalTime::class)
     override fun getStream(
         url: String,
     ): StateFlow<RssFeed> {
