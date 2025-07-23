@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidTest)
@@ -19,32 +20,32 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+            freeCompilerArgs.add("-Xannotation-default-target=param-property")
+        }
     }
     targetProjectPath = ":app"
     testOptions.managedDevices.allDevices {
         @Suppress("UnstableApiUsage")
-        create<ManagedVirtualDevice>("pixel9Api36") {
+        create<ManagedVirtualDevice>("pixel9Api35") {
             device = "Pixel 9"
-            apiLevel = 36
+            apiLevel = 35
             systemImageSource = "google"
         }
     }
 }
 
 baselineProfile {
-    managedDevices += "pixel9Api36"
+    managedDevices += "pixel9Api35"
     useConnectedDevices = false
 }
 
 dependencies {
-    coreLibraryDesugaring(libs.desugarJdkLibs)
-
     implementation(libs.androidxJunit)
     implementation(libs.espressoCore)
     implementation(libs.uiAutomator)

@@ -1,6 +1,5 @@
 [versions]
 agp = "8.11.1"
-desugarJdkLibs = "2.1.5"
 kotlin = "2.2.0"
 ksp = "2.2.0-2.0.2"
 hilt = "2.57"
@@ -44,8 +43,6 @@ testRule = "1.6.1"
 # for release
 
 [libraries]
-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
-
 hiltAndroid = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hiltAndroidCompiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 kotlinxCoroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
