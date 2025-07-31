@@ -32,16 +32,16 @@ android {
     targetProjectPath = ":app"
     testOptions.managedDevices.allDevices {
         @Suppress("UnstableApiUsage")
-        create<ManagedVirtualDevice>("pixel9Api35") {
+        create<ManagedVirtualDevice>("pixel9Api36") {
             device = "Pixel 9"
-            apiLevel = 35
+            apiLevel = 36
             systemImageSource = "google"
         }
     }
 }
 
 baselineProfile {
-    managedDevices += "pixel9Api35"
+    managedDevices += "pixel9Api36"
     useConnectedDevices = false
 }
 
