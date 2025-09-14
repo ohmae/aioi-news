@@ -10,4 +10,5 @@ package net.mm2d.news.aioi
 object Constants {
     const val PACKAGE_NAME = "net.mm2d.news.aioi"
     const val PRIVACY_POLICY_URL = "https://ohmae.github.io/app/aioi/privacy-policy.html"
+    const val GITHUB_URL = "https://github.com/ohmae/aioi-news"
 }

@@ -88,6 +88,20 @@ fun DrawerContent(
                 HorizontalDivider()
             }
             item {
+                Text(
+                    text = stringResource(id = R.string.menu_github),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier
+                        .clickable {
+                            Launcher.openCustomTabs(context, Constants.GITHUB_URL)
+                            scope.launch { drawerState.close() }
+                        }
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                        .fillMaxWidth(),
+                )
+                HorizontalDivider()
+            }
+            item {
                 Row(
                     verticalAlignment = Alignment.Bottom,
                     modifier = Modifier
