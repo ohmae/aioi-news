@@ -99,7 +99,6 @@ dependencies {
     implementation(libs.ktorClientOkhttp)
 
     debugImplementation(libs.okhttpLoggingInterceptor)
-    debugImplementation(libs.leakcanary)
 
     testImplementation(libs.junit)
 
