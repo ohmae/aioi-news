@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.androidxComposeUiGraphics)
     implementation(libs.androidxComposeUiToolingPreview)
     implementation(libs.androidxComposeMaterial3)
+    implementation(libs.androidxComposeMaterialIconsCore)
     implementation(libs.accompanistDrawablePainter)
 
     implementation(libs.material)
