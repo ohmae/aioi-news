@@ -103,6 +103,7 @@ class Rss2Handler(
         ) {
             when {
                 tag.matches("", "url") -> builder.imageUrl = text
+
                 tag.matches("", "title") -> {
                     if (builder.title.isEmpty()) {
                         builder.title = text
@@ -140,7 +141,7 @@ class Rss2Handler(
     ): Long =
         try {
             OffsetDateTime.parse(text, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant().toEpochMilli()
-        } catch (e: DateTimeParseException) {
+        } catch (_: DateTimeParseException) {
             0L
         }
 
