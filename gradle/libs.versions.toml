@@ -18,7 +18,7 @@ androidxActivity = "1.12.2"
 androidxBrowser = "1.9.0"
 androidxRoom = "2.8.4"
 androidxComposeBom = "2025.12.01"
-androidxNavigation = "2.9.6"
+androidxNavigation3 = "1.0.0"
 androidxHiltCompose = "1.3.0"
 accompanist = "0.37.3"
 material = "1.13.0"
@@ -60,8 +60,10 @@ androidxRoom = { group = "androidx.room", name = "room-ktx", version.ref = "andr
 androidxRoomCompiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
 
 androidxActivityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
-androidxNavigationCompose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidxHiltCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltCompose" }
+androidxLifecycleViewModelNavigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "androidxLifecycle" }
+androidxNavigation3Runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "androidxNavigation3" }
+androidxNavigation3Ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "androidxNavigation3" }
 androidxComposeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidxComposeUi = { group = "androidx.compose.ui", name = "ui" }
 androidxComposeUiGraphics = { group = "androidx.compose.ui", name = "ui-graphics" }

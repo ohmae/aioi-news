@@ -87,7 +87,9 @@ dependencies {
     ksp(libs.androidxRoomCompiler)
 
     implementation(libs.androidxActivityCompose)
-    implementation(libs.androidxNavigationCompose)
+    implementation(libs.androidxLifecycleViewModelNavigation3)
+    implementation(libs.androidxNavigation3Runtime)
+    implementation(libs.androidxNavigation3Ui)
     implementation(libs.androidxHiltCompose)
     implementation(platform(libs.androidxComposeBom))
     implementation(libs.androidxComposeUi)
