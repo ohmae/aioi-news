@@ -6,6 +6,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation3.scene.Scene
 import androidx.navigationevent.NavigationEvent
+import androidx.navigationevent.NavigationEvent.SwipeEdge
 
 object NavigationSpec {
     fun <T : Any> transition(): AnimatedContentTransitionScope<Scene<T>>.() -> ContentTransform =
@@ -32,9 +33,7 @@ object NavigationSpec {
             )
         }
 
-    fun <T : Any> predictivePopTransition(): AnimatedContentTransitionScope<Scene<T>>.(
-        @NavigationEvent.SwipeEdge Int,
-    ) -> ContentTransform =
+    fun <T : Any> predictivePopTransition(): AnimatedContentTransitionScope<Scene<T>>.(@SwipeEdge Int) -> ContentTransform =
         { edge ->
             if (edge == NavigationEvent.EDGE_RIGHT) {
                 ContentTransform(
