@@ -22,6 +22,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlin {
         compilerOptions {
@@ -46,6 +47,8 @@ baselineProfile {
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugarJdkLibs)
+
     implementation(libs.androidxJunit)
     implementation(libs.espressoCore)
     implementation(libs.uiAutomator)

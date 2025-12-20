@@ -50,6 +50,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlin {
         compilerOptions {
@@ -67,6 +68,8 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugarJdkLibs)
+
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.kotlinxSerializationCore)
