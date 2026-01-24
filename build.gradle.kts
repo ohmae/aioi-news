@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.kotlinCompose) apply false
     alias(libs.plugins.kotlinxSerialization) apply false
     alias(libs.plugins.ksp) apply false
@@ -14,6 +13,12 @@ plugins {
     alias(libs.plugins.baselineProfile) apply false
 
     // for release
+}
+
+buildscript {
+    dependencies {
+        classpath(libs.kotlinGradlePlugin)
+    }
 }
 
 val ktlint: Configuration by configurations.creating

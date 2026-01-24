@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidTest)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.baselineProfile)
     alias(libs.plugins.gradleVersions)
 }
@@ -24,12 +23,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_11
-            freeCompilerArgs.add("-Xannotation-default-target=param-property")
-        }
-    }
     targetProjectPath = ":app"
     testOptions.managedDevices.allDevices {
         @Suppress("UnstableApiUsage")
@@ -38,6 +31,13 @@ android {
             apiLevel = 36
             systemImageSource = "google"
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 
