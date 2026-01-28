@@ -1,11 +1,9 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidTest)
     alias(libs.plugins.baselineProfile)
-    alias(libs.plugins.gradleVersions)
 }
 
 android {
@@ -65,17 +63,4 @@ androidComponents {
             v.testedApks.map { artifactsLoader.load(it)!!.applicationId },
         )
     }
-}
-
-fun isStable(
-    version: String,
-): Boolean {
-    val versionUpperCase = version.uppercase()
-    val hasStableKeyword = listOf("RELEASE", "FINAL", "GA").any { versionUpperCase.contains(it) }
-    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    return hasStableKeyword || regex.matches(version)
-}
-
-tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
-    rejectVersionIf { !isStable(candidate.version) && isStable(currentVersion) }
 }

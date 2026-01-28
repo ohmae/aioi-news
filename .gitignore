@@ -36,3 +36,4 @@
 *.iml
 ehthumbs.db
 Thumbs.db
+/gradle/libs.versions.updates.toml

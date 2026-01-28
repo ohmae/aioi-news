@@ -6,7 +6,7 @@ ksp = "2.3.4"
 hilt = "2.59"
 kover = "0.9.4"
 dependencyGuard = "0.5.0"
-gradleVersionsPlugin = "0.53.0"
+versionCatalogUpdate = "1.0.1"
 
 kotlinxCoroutines = "1.10.2"
 kotlinxSerialization = "1.10.0"
@@ -105,8 +105,8 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 androidxRoom = { id = "androidx.room", version.ref = "androidxRoom" }
 hilt = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
-gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin" }
 dependencyGuard = { id = "com.dropbox.dependency-guard", version.ref = "dependencyGuard" }
+versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
 
 androidTest = { id = "com.android.test", version.ref = "agp" }
 baselineProfile = { id = "androidx.baselineprofile", version.ref = "baselineProfile" }

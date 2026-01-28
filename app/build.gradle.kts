@@ -1,4 +1,3 @@
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -9,7 +8,6 @@ plugins {
     alias(libs.plugins.androidxRoom)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kover)
-    alias(libs.plugins.gradleVersions)
     alias(libs.plugins.dependencyGuard)
 
     alias(libs.plugins.baselineProfile)
@@ -120,17 +118,4 @@ dependencies {
 
 dependencyGuard {
     configuration("releaseRuntimeClasspath")
-}
-
-fun isStable(
-    version: String,
-): Boolean {
-    val versionUpperCase = version.uppercase()
-    val hasStableKeyword = listOf("RELEASE", "FINAL", "GA").any { versionUpperCase.contains(it) }
-    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    return hasStableKeyword || regex.matches(version)
-}
-
-tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
-    rejectVersionIf { !isStable(candidate.version) && isStable(currentVersion) }
 }
