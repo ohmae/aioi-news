@@ -1,10 +1,10 @@
 [versions]
 agp = "9.0.0"
 desugarJdkLibs = "2.1.5"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 ksp = "2.3.5"
-hilt = "2.59"
-kover = "0.9.5"
+hilt = "2.59.1"
+kover = "0.9.6"
 dependencyGuard = "0.5.0"
 versionCatalogUpdate = "1.0.1"
 
