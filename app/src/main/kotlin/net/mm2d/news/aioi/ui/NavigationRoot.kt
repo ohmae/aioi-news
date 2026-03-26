@@ -61,10 +61,10 @@ private fun mainEntryProvider(
                 },
             )
         }
-        entry<MainNavKey.License> {
+        entry<MainNavKey.License> { navKey ->
             LicenseScreen(
                 popBackStack = {
-                    navigator.goBack()
+                    navigator.goBack(navKey)
                 },
             )
         }

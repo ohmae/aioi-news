@@ -32,7 +32,11 @@ class Navigator(
     private val navGraph: NavGraph,
     private val onExit: () -> Unit,
 ) {
-    fun goBack() {
+    fun goBack(from: NavKey? = null) {
+        if (from != null && backStack.lastOrNull() != from) {
+            Log.v("Navigator", "goBack from $from was ignored because current top is ${backStack.lastOrNull()}")
+            return
+        }
         if (backStack.size > 1) {
             backStack.removeLastOrNull()
         } else {
@@ -46,11 +50,11 @@ class Navigator(
         if (backStack.isEmpty()) return
         val from = backStack.last()
         if (from == to) {
-            Log.v("NavGraph", "from: $from, to: $to is same.")
+            Log.v("Navigator", "from: $from, to: $to is same.")
             return // 連打無効
         }
         if (!navGraph.canNavigate(from, to)) {
-            Log.e("NavGraph", "from: $from, to: $to is not allowed.")
+            Log.e("Navigator", "from: $from, to: $to is not allowed.")
             return
         }
         backStack.add(to)
