@@ -54,12 +54,12 @@ kotlinxSerializationCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-se
 kotlinxSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 kotlinxDatetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
-androidxCore = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
-androidxLifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
+androidxCore = { group = "androidx.core", name = "core", version.ref = "androidxCore" }
+androidxLifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "androidxLifecycle" }
 androidxLifecycleProcess = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "androidxLifecycle" }
 androidxLifecycleViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidxBrowser = { group = "androidx.browser", name = "browser", version.ref = "androidxBrowser" }
-androidxRoom = { group = "androidx.room", name = "room-ktx", version.ref = "androidxRoom" }
+androidxRoom = { group = "androidx.room", name = "room-runtime", version.ref = "androidxRoom" }
 androidxRoomCompiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
 
 androidxActivityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
