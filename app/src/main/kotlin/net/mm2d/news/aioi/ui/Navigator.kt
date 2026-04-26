@@ -32,7 +32,9 @@ class Navigator(
     private val navGraph: NavGraph,
     private val onExit: () -> Unit,
 ) {
-    fun goBack(from: NavKey? = null) {
+    fun goBack(
+        from: NavKey? = null,
+    ) {
         if (from != null && backStack.lastOrNull() != from) {
             Log.v("Navigator", "goBack from $from was ignored because current top is ${backStack.lastOrNull()}")
             return

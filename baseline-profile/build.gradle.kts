@@ -7,8 +7,8 @@ plugins {
 }
 
 android {
-    namespace = "net.mm2d.news.aioi.baseline_profile"
-    compileSdk = 36
+    namespace = "net.mm2d.news.aioi.baseline.profile"
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 28
@@ -24,8 +24,8 @@ android {
     targetProjectPath = ":app"
     testOptions.managedDevices.allDevices {
         @Suppress("UnstableApiUsage")
-        create<ManagedVirtualDevice>("pixel9Api36") {
-            device = "Pixel 9"
+        create<ManagedVirtualDevice>("pixel10Api36") {
+            device = "Pixel 10"
             apiLevel = 36
             systemImageSource = "google"
         }
@@ -40,7 +40,7 @@ kotlin {
 }
 
 baselineProfile {
-    managedDevices += "pixel9Api36"
+    managedDevices += "pixel10Api36"
     useConnectedDevices = false
 }
 
