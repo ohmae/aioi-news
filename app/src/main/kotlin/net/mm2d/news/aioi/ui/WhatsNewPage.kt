@@ -63,7 +63,10 @@ fun WhatsNewPage(
         modifier = modifier.fillMaxSize(),
     ) {
         itemsIndexed(feed.items) { index, item ->
-            Item(item = item)
+            Item(
+                item = item,
+                visit = viewModel::visit
+            )
             if (index != feed.items.lastIndex) {
                 HorizontalDivider()
             }
@@ -76,8 +79,8 @@ private val newInterval = 7.days.inWholeMilliseconds
 @Composable
 private fun LazyItemScope.Item(
     item: RssItem,
+    visit: (String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: WhatsNewViewModel = hiltViewModel(),
 ) {
     val transitionState = remember {
         MutableTransitionState(false).also {
@@ -104,7 +107,7 @@ private fun LazyItemScope.Item(
                 .clickable {
                     Launcher.openCustomTabs(context, item.link)
                     lifecycleOwner.doOnStop {
-                        viewModel.visit(item.id)
+                        visit(item.id)
                     }
                 }
                 .background(
