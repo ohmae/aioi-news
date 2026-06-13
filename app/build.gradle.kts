@@ -22,7 +22,7 @@ val versionPatch = 9
 
 android {
     namespace = "net.mm2d.news.aioi"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "net.mm2d.news.aioi"
@@ -114,6 +114,12 @@ dependencies {
     baselineProfile(projects.baselineProfile)
 
     // for release
+}
+
+configurations.configureEach {
+    resolutionStrategy {
+        force(libs.kotlinMetadataJvm)
+    }
 }
 
 dependencyGuard {
