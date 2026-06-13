@@ -22,7 +22,9 @@ val versionPatch = 10
 
 android {
     namespace = "net.mm2d.news.aioi"
-    compileSdk = 37
+    compileSdk {
+        version = release(37)
+    }
 
     defaultConfig {
         applicationId = "net.mm2d.news.aioi"
