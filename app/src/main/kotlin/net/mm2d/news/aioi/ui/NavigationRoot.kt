@@ -9,6 +9,7 @@ package net.mm2d.news.aioi.ui
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -18,6 +19,7 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import net.mm2d.news.aioi.ui.theme.NavigationSpec
 
+@Serializable
 private sealed interface MainNavKey : NavKey {
     @Serializable
     object Main : MainNavKey
@@ -33,9 +35,10 @@ private val navGraph: NavGraph = navGraph {
 @Composable
 fun NavigationRoot() {
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val navigator = rememberNavigator(MainNavKey.Main, navGraph) {
+    val navigator = rememberNavigator<MainNavKey>(MainNavKey.Main, navGraph) {
         onBackPressedDispatcher?.onBackPressed()
     }
+    val entryProvider = remember(navigator) { mainEntryProvider(navigator) }
     NavDisplay(
         backStack = navigator.backStack,
         onBack = { navigator.goBack() },
@@ -46,13 +49,13 @@ fun NavigationRoot() {
         transitionSpec = NavigationSpec.transition(),
         popTransitionSpec = NavigationSpec.popTransition(),
         predictivePopTransitionSpec = NavigationSpec.predictivePopTransition(),
-        entryProvider = mainEntryProvider(navigator),
+        entryProvider = entryProvider,
     )
 }
 
 private fun mainEntryProvider(
-    navigator: Navigator,
-): (NavKey) -> NavEntry<NavKey> =
+    navigator: Navigator<MainNavKey>,
+): (MainNavKey) -> NavEntry<MainNavKey> =
     entryProvider {
         entry<MainNavKey.Main> {
             MainScreen(

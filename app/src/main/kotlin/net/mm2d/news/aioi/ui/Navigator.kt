@@ -18,12 +18,13 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import kotlin.reflect.KClass
 
 @Composable
-fun rememberNavigator(
-    initialKey: NavKey,
+fun <T : NavKey> rememberNavigator(
+    initialKey: T,
     navGraph: NavGraph,
     onExit: () -> Unit,
-): Navigator {
-    val backStack = rememberNavBackStack(initialKey)
+): Navigator<T> {
+    @Suppress("UNCHECKED_CAST")
+    val backStack = rememberNavBackStack(initialKey) as NavBackStack<T>
     val currentOnExit by rememberUpdatedState(onExit)
     return remember(navGraph) {
         Navigator(
@@ -34,13 +35,13 @@ fun rememberNavigator(
     }
 }
 
-class Navigator(
-    val backStack: NavBackStack<NavKey>,
+class Navigator<T : NavKey>(
+    val backStack: NavBackStack<T>,
     private val navGraph: NavGraph,
     private val onExit: () -> Unit,
 ) {
     fun goBack(
-        from: NavKey? = null,
+        from: T? = null,
     ) {
         if (from != null && backStack.lastOrNull() != from) {
             Log.v("Navigator", "goBack from $from was ignored because current top is ${backStack.lastOrNull()}")
@@ -54,7 +55,7 @@ class Navigator(
     }
 
     fun navigate(
-        to: NavKey,
+        to: T,
     ) {
         if (backStack.isEmpty()) return
         val from = backStack.last()
