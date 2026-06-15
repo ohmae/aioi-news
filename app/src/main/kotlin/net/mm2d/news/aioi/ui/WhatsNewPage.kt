@@ -65,7 +65,7 @@ fun WhatsNewPage(
         itemsIndexed(feed.items) { index, item ->
             Item(
                 item = item,
-                visit = viewModel::visit
+                visit = viewModel::visit,
             )
             if (index != feed.items.lastIndex) {
                 HorizontalDivider()

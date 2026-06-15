@@ -27,7 +27,7 @@ private sealed interface MainNavKey : NavKey {
 }
 
 private val navGraph: NavGraph = navGraph {
-    MainNavKey.Main leadsTo MainNavKey.License
+    MainNavKey.Main leadsTo MainNavKey.License::class
 }
 
 @Composable

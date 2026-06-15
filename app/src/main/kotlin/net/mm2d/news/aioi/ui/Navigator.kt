@@ -9,7 +9,9 @@ package net.mm2d.news.aioi.ui
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -22,8 +24,13 @@ fun rememberNavigator(
     onExit: () -> Unit,
 ): Navigator {
     val backStack = rememberNavBackStack(initialKey)
-    return remember {
-        Navigator(backStack, navGraph, onExit)
+    val currentOnExit by rememberUpdatedState(onExit)
+    return remember(navGraph) {
+        Navigator(
+            backStack = backStack,
+            navGraph = navGraph,
+            onExit = { currentOnExit() },
+        )
     }
 }
 
@@ -88,18 +95,17 @@ class NavGraphBuilder {
     internal fun build(): Map<KClass<out NavKey>, Set<KClass<out NavKey>>> = graph.toMap()
 
     infix fun NavKey.leadsTo(
-        destination: NavKey,
+        destination: KClass<out NavKey>,
     ) {
         val key = this::class
-        val value = destination::class
-        graph[key] = graph[key]?.let { it + value } ?: setOf(value)
+        graph[key] = graph[key]?.let { it + destination } ?: setOf(destination)
     }
 
     infix fun NavKey.leadsTo(
-        destinations: Iterable<NavKey>,
+        destinations: Iterable<KClass<out NavKey>>,
     ) {
         val key = this::class
-        val values = destinations.map { it::class }.toSet()
+        val values = destinations.toSet()
         graph[key] = graph[key]?.let { it + values } ?: values
     }
 }
