@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.dropUnlessResumed
 import net.mm2d.news.aioi.R
 import net.mm2d.news.aioi.util.Launcher
 import net.mm2d.news.aioi.util.resolveColor
@@ -53,7 +54,7 @@ fun LicenseScreen(
         topBar = {
             Toolbar(
                 navigationBehavior = scrollBehavior,
-                onBackClicked = { popBackStack() },
+                onBackClicked = dropUnlessResumed { popBackStack() },
             )
         },
     ) { paddingValues ->
@@ -82,7 +83,7 @@ private fun Toolbar(
         navigationIcon = {
             Image(
                 modifier = Modifier
-                    .clickable { onBackClicked() }
+                    .clickable(onClick = onBackClicked)
                     .padding(12.dp),
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = null,

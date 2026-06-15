@@ -38,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.coroutines.launch
 import net.mm2d.news.aioi.R
 
@@ -56,7 +57,7 @@ fun MainScreen(
         drawerContent = {
             DrawerContent(
                 drawerState = drawerState,
-                navigateToLicense = navigateToLicense,
+                navigateToLicense = dropUnlessResumed { navigateToLicense() },
                 modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
             )
         },
