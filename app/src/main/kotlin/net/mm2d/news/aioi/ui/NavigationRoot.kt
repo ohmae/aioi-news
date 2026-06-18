@@ -28,14 +28,14 @@ private sealed interface MainNavKey : NavKey {
     object License : MainNavKey
 }
 
-private val navGraph: NavGraph = navGraph {
-    MainNavKey.Main leadsTo MainNavKey.License::class
+private val navGraph: NavGraph<MainNavKey> = navGraph {
+    MainNavKey.Main::class leadsTo MainNavKey.License::class
 }
 
 @Composable
 fun NavigationRoot() {
     val onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-    val navigator = rememberNavigator<MainNavKey>(MainNavKey.Main, navGraph) {
+    val navigator = rememberNavigator(MainNavKey.Main, navGraph) {
         onBackPressedDispatcher?.onBackPressed()
     }
     val entryProvider = remember(navigator) { mainEntryProvider(navigator) }

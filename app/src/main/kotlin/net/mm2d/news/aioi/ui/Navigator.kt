@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
 @Composable
 fun <T : NavKey> rememberNavigator(
     initialKey: T,
-    navGraph: NavGraph,
+    navGraph: NavGraph<T>,
     onExit: () -> Unit,
 ): Navigator<T> {
     @Suppress("UNCHECKED_CAST")
@@ -37,7 +37,7 @@ fun <T : NavKey> rememberNavigator(
 
 class Navigator<T : NavKey>(
     val backStack: NavBackStack<T>,
-    private val navGraph: NavGraph,
+    private val navGraph: NavGraph<T>,
     private val onExit: () -> Unit,
 ) {
     fun goBack(
@@ -71,42 +71,41 @@ class Navigator<T : NavKey>(
     }
 }
 
-interface NavGraph {
+interface NavGraph<T : NavKey> {
     fun canNavigate(
-        from: NavKey,
-        to: NavKey,
+        from: T,
+        to: T,
     ): Boolean
 }
 
-fun navGraph(
-    action: NavGraphBuilder.() -> Unit,
-): NavGraph = NavGraphImpl(NavGraphBuilder().apply(action).build())
+fun <T : NavKey> navGraph(
+    action: NavGraphBuilder<T>.() -> Unit,
+): NavGraph<T> = NavGraphImpl(NavGraphBuilder<T>().apply(action).build())
 
-private class NavGraphImpl(
-    private val graph: Map<KClass<out NavKey>, Set<KClass<out NavKey>>>,
-) : NavGraph {
+private class NavGraphImpl<T : NavKey>(
+    private val graph: Map<KClass<out T>, Set<KClass<out T>>>,
+) : NavGraph<T> {
     override fun canNavigate(
-        from: NavKey,
-        to: NavKey,
+        from: T,
+        to: T,
     ): Boolean = graph[from::class]?.contains(to::class) == true
 }
 
-class NavGraphBuilder {
-    private val graph = mutableMapOf<KClass<out NavKey>, Set<KClass<out NavKey>>>()
-    internal fun build(): Map<KClass<out NavKey>, Set<KClass<out NavKey>>> = graph.toMap()
+class NavGraphBuilder<T : NavKey> {
+    private val graph = mutableMapOf<KClass<out T>, Set<KClass<out T>>>()
+    internal fun build(): Map<KClass<out T>, Set<KClass<out T>>> = graph.toMap()
 
-    infix fun NavKey.leadsTo(
-        destination: KClass<out NavKey>,
+    infix fun KClass<out T>.leadsTo(
+        destination: KClass<out T>,
     ) {
-        val key = this::class
+        val key = this
         graph[key] = graph[key]?.let { it + destination } ?: setOf(destination)
     }
 
-    infix fun NavKey.leadsTo(
-        destinations: Iterable<KClass<out NavKey>>,
+    infix fun KClass<out T>.leadsTo(
+        destinations: Set<KClass<out T>>,
     ) {
-        val key = this::class
-        val values = destinations.toSet()
-        graph[key] = graph[key]?.let { it + values } ?: values
+        val key = this
+        graph[key] = graph[key]?.let { it + destinations } ?: destinations
     }
 }
