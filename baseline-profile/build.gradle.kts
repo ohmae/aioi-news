@@ -26,9 +26,9 @@ android {
     targetProjectPath = ":app"
     testOptions.managedDevices.allDevices {
         @Suppress("UnstableApiUsage")
-        create<ManagedVirtualDevice>("pixel10Api36") {
+        create<ManagedVirtualDevice>("pixel10Api37") {
             device = "Pixel 10"
-            apiLevel = 36
+            apiLevel = 37
             systemImageSource = "google"
         }
     }
