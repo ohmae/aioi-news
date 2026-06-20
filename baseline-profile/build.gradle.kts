@@ -8,7 +8,9 @@ plugins {
 
 android {
     namespace = "net.mm2d.news.aioi.baseline.profile"
-    compileSdk = 37
+    compileSdk {
+        version = release(37)
+    }
 
     defaultConfig {
         minSdk = 28
