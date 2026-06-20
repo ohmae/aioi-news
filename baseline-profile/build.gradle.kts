@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
+import com.android.build.api.dsl.ManagedVirtualDevice.PageAlignment
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -30,6 +31,7 @@ android {
             device = "Pixel 10"
             apiLevel = 37
             systemImageSource = "google"
+            pageAlignment = PageAlignment.FORCE_16KB_PAGES
         }
     }
 }
@@ -42,7 +44,7 @@ kotlin {
 }
 
 baselineProfile {
-    managedDevices += "pixel10Api36"
+    managedDevices += "pixel10Api37"
     useConnectedDevices = false
 }
 
