@@ -9,6 +9,7 @@ package net.mm2d.news.aioi.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.ViewGroup.LayoutParams
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -101,6 +102,7 @@ private fun setUpWebView(
 private fun setUp(
     webView: WebView,
 ) {
+    webView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     webView.settings.let {
         it.setSupportZoom(false)
         it.displayZoomControls = false
