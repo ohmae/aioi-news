@@ -29,7 +29,7 @@ android {
     defaultConfig {
         applicationId = "net.mm2d.news.aioi"
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 37
         versionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
         versionName = "$versionMajor.$versionMinor.$versionPatch"
         base.archivesName.set("$applicationName-$versionName")
@@ -62,7 +62,6 @@ android {
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
-        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 
