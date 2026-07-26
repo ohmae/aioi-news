@@ -46,9 +46,9 @@ fun NavigationRoot() {
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
         ),
-        transitionSpec = NavigationSpec.transition(),
-        popTransitionSpec = NavigationSpec.popTransition(),
-        predictivePopTransitionSpec = NavigationSpec.predictivePopTransition(),
+        transitionSpec = NavigationSpec.push(),
+        popTransitionSpec = NavigationSpec.pop(),
+        predictivePopTransitionSpec = NavigationSpec.predictivePop(),
         entryProvider = entryProvider,
     )
 }
