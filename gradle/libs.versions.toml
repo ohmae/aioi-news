@@ -1,5 +1,5 @@
 [versions]
-agp = "9.3.1"
+agp = "9.3.2"
 desugarJdkLibs = "2.1.5"
 kotlin = "2.4.10"
 ksp = "2.3.11"
@@ -23,7 +23,7 @@ androidxHiltCompose = "1.4.0"
 accompanist = "0.37.3"
 material = "1.14.0"
 ktor = "3.5.2"
-okhttp = "5.4.0"
+okhttp = "5.5.0"
 
 # test
 junit = "4.13.2"
