@@ -15,13 +15,14 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,13 +50,10 @@ fun LinkPage(
     val links by viewModel.getLinksStream().collectAsState()
     LazyColumn(
         modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(vertical = 6.dp),
     ) {
-        itemsIndexed(links) { index, link ->
-            Item(
-                link = link,
-                isTop = index == 0,
-                isBottom = index == links.lastIndex,
-            )
+        items(links) { link ->
+            Item(link = link)
         }
     }
 }
@@ -63,8 +61,6 @@ fun LinkPage(
 @Composable
 private fun LazyItemScope.Item(
     link: Link,
-    isTop: Boolean,
-    isBottom: Boolean,
 ) {
     val transitionState = remember {
         MutableTransitionState(false).also {
@@ -84,11 +80,9 @@ private fun LazyItemScope.Item(
                 ),
             ),
     ) {
-        val marginTop = if (isTop) 8.dp else 2.dp
-        val marginBottom = if (isBottom) 8.dp else 2.dp
         Surface(
             modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp, top = marginTop, bottom = marginBottom)
+                .padding(horizontal = 8.dp, vertical = 2.dp)
                 .fillMaxWidth(),
             onClick = { Launcher.openCustomTabs(context, link.url) },
             shape = MaterialTheme.shapes.medium,
