@@ -7,19 +7,20 @@
 
 package net.mm2d.news.aioi.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,86 +41,100 @@ fun DrawerContent(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val items = remember {
+        listOf(
+            Item(
+                textId = R.string.menu_license,
+                onClick = {
+                    navigateToLicense()
+                    scope.launch { drawerState.close() }
+                },
+            ),
+            Item(
+                textId = R.string.menu_privacy_policy,
+                onClick = {
+                    Launcher.openCustomTabs(context, Constants.PRIVACY_POLICY_URL)
+                    scope.launch { drawerState.close() }
+                },
+            ),
+            Item(
+                textId = R.string.menu_play_store,
+                onClick = {
+                    Launcher.openGooglePlay(context, Constants.PACKAGE_NAME)
+                    scope.launch { drawerState.close() }
+                },
+            ),
+            Item(
+                textId = R.string.menu_github,
+                onClick = {
+                    Launcher.openCustomTabs(context, Constants.GITHUB_URL)
+                    scope.launch { drawerState.close() }
+                },
+            ),
+        )
+    }
+
     ModalDrawerSheet(
         modifier = modifier,
     ) {
         Spacer(modifier = Modifier.height(24.dp))
         LazyColumn {
-            item {
-                Text(
-                    text = stringResource(id = R.string.menu_license),
-                    style = MaterialTheme.typography.titleMedium,
+            items(items) { item ->
+                Surface(
+                    onClick = item.onClick,
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     modifier = Modifier
-                        .clickable {
-                            navigateToLicense()
-                            scope.launch { drawerState.close() }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                )
-                HorizontalDivider()
-            }
-            item {
-                Text(
-                    text = stringResource(id = R.string.menu_privacy_policy),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier
-                        .clickable {
-                            Launcher.openCustomTabs(context, Constants.PRIVACY_POLICY_URL)
-                            scope.launch { drawerState.close() }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                )
-                HorizontalDivider()
-            }
-            item {
-                Text(
-                    text = stringResource(id = R.string.menu_play_store),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier
-                        .clickable {
-                            Launcher.openGooglePlay(context, Constants.PACKAGE_NAME)
-                            scope.launch { drawerState.close() }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                )
-                HorizontalDivider()
-            }
-            item {
-                Text(
-                    text = stringResource(id = R.string.menu_github),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier
-                        .clickable {
-                            Launcher.openCustomTabs(context, Constants.GITHUB_URL)
-                            scope.launch { drawerState.close() }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
-                )
-                HorizontalDivider()
-            }
-            item {
-                Row(
-                    verticalAlignment = Alignment.Bottom,
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
                 ) {
                     Text(
-                        text = stringResource(id = R.string.menu_version),
+                        text = stringResource(id = item.textId),
                         style = MaterialTheme.typography.titleMedium,
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = BuildConfig.VERSION_NAME,
-                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                            .fillMaxWidth(),
                     )
                 }
-                HorizontalDivider()
+            }
+            item {
+                Surface(
+                    onClick = {},
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.menu_version),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Surface(
+                            shape = MaterialTheme.shapes.large,
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                text = BuildConfig.VERSION_NAME,
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
+
+private data class Item(
+    val textId: Int,
+    val onClick: () -> Unit,
+)

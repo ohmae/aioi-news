@@ -14,7 +14,6 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,8 +22,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -52,10 +51,11 @@ fun LinkPage(
         modifier = modifier.fillMaxSize(),
     ) {
         itemsIndexed(links) { index, link ->
-            Item(link)
-            if (index != links.lastIndex) {
-                HorizontalDivider()
-            }
+            Item(
+                link = link,
+                isTop = index == 0,
+                isBottom = index == links.lastIndex,
+            )
         }
     }
 }
@@ -63,7 +63,8 @@ fun LinkPage(
 @Composable
 private fun LazyItemScope.Item(
     link: Link,
-    modifier: Modifier = Modifier,
+    isTop: Boolean,
+    isBottom: Boolean,
 ) {
     val transitionState = remember {
         MutableTransitionState(false).also {
@@ -71,6 +72,7 @@ private fun LazyItemScope.Item(
         }
     }
 
+    val context = LocalContext.current
     AnimatedVisibility(
         visibleState = transitionState,
         enter = fadeIn(),
@@ -82,31 +84,46 @@ private fun LazyItemScope.Item(
                 ),
             ),
     ) {
-        val context = LocalContext.current
-        Row(
-            modifier = modifier
-                .clickable { Launcher.openCustomTabs(context, link.url) }
-                .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+        val marginTop = if (isTop) 8.dp else 2.dp
+        val marginBottom = if (isBottom) 8.dp else 2.dp
+        Surface(
+            modifier = Modifier
+                .padding(start = 8.dp, end = 8.dp, top = marginTop, bottom = marginBottom)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            onClick = { Launcher.openCustomTabs(context, link.url) },
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
-            Column(
-                modifier = modifier
-                    .weight(1f),
-            ) {
-                Text(
-                    text = link.title,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = link.url,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-            Image(
-                painter = painterResource(id = R.drawable.ic_chevron_right),
-                contentDescription = null,
+            ItemContent(link)
+        }
+    }
+}
+
+@Composable
+private fun ItemContent(
+    link: Link,
+) {
+    Row(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 4.dp, top = 16.dp, bottom = 16.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = link.title,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = link.url,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
+        Image(
+            painter = painterResource(id = R.drawable.ic_chevron_right),
+            contentDescription = null,
+        )
     }
 }

@@ -15,8 +15,6 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,9 +24,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,7 +33,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -66,10 +62,9 @@ fun WhatsNewPage(
             Item(
                 item = item,
                 visit = viewModel::visit,
+                isTop = index == 0,
+                isBottom = index == feed.items.lastIndex,
             )
-            if (index != feed.items.lastIndex) {
-                HorizontalDivider()
-            }
         }
     }
 }
@@ -80,7 +75,8 @@ private val newInterval = 7.days.inWholeMilliseconds
 private fun LazyItemScope.Item(
     item: RssItem,
     visit: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    isTop: Boolean,
+    isBottom: Boolean,
 ) {
     val transitionState = remember {
         MutableTransitionState(false).also {
@@ -101,23 +97,29 @@ private fun LazyItemScope.Item(
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
 
-        ItemContent(
-            item = item,
-            modifier = modifier
-                .clickable {
-                    Launcher.openCustomTabs(context, item.link)
-                    lifecycleOwner.doOnStop {
-                        visit(item.id)
-                    }
+        val marginTop = if (isTop) 8.dp else 2.dp
+        val marginBottom = if (isBottom) 8.dp else 2.dp
+        Surface(
+            modifier = Modifier
+                .padding(start = 8.dp, end = 8.dp, top = marginTop, bottom = marginBottom)
+                .fillMaxWidth(),
+            onClick = {
+                Launcher.openCustomTabs(context, item.link)
+                lifecycleOwner.doOnStop {
+                    visit(item.id)
                 }
-                .background(
-                    color = if (item.visited) {
-                        MaterialTheme.colorScheme.surfaceContainer
-                    } else {
-                        MaterialTheme.colorScheme.background
-                    },
-                ),
-        )
+            },
+            shape = MaterialTheme.shapes.medium,
+            color = if (item.visited) {
+                MaterialTheme.colorScheme.surfaceContainerLowest
+            } else {
+                MaterialTheme.colorScheme.surfaceContainer
+            },
+        ) {
+            ItemContent(
+                item = item,
+            )
+        }
     }
 }
 
@@ -125,13 +127,12 @@ private fun LazyItemScope.Item(
 @Composable
 private fun ItemContent(
     item: RssItem,
-    modifier: Modifier = Modifier,
 ) {
     val now = Clock.System.now().toEpochMilliseconds()
     val isNew = !item.visited && now - item.created < newInterval
     Row(
-        modifier = modifier
-            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+        modifier = Modifier
+            .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -147,20 +148,23 @@ private fun ItemContent(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (isNew) {
-                    Text(
-                        text = "NEW",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontSize = with(LocalDensity.current) {
-                                8.dp.toSp()
-                            },
-                        ),
-                        color = MaterialTheme.colorScheme.onError,
-                        modifier = Modifier
-                            .padding(end = 4.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(color = MaterialTheme.colorScheme.error)
-                            .padding(horizontal = 6.dp, vertical = 0.dp),
-                    )
+                    Surface(
+                        Modifier.padding(end = 8.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.error,
+                    ) {
+                        Text(
+                            text = "NEW",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontSize = with(LocalDensity.current) {
+                                    8.dp.toSp()
+                                },
+                            ),
+                            color = MaterialTheme.colorScheme.onError,
+                            modifier = Modifier
+                                .padding(horizontal = 6.dp, vertical = 0.dp),
+                        )
+                    }
                 }
                 Text(
                     text = item.title,

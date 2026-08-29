@@ -25,11 +25,11 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
@@ -37,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.dropUnlessResumed
 import kotlinx.coroutines.launch
 import net.mm2d.news.aioi.R
@@ -96,26 +95,24 @@ private fun TopBar(
     drawerState: DrawerState,
 ) {
     val scope = rememberCoroutineScope()
-    Surface(shadowElevation = 2.dp) {
-        TopAppBar(
-            navigationIcon = {
-                IconButton(
-                    onClick = { scope.launch { drawerState.open() } },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = null,
-                    )
-                }
-            },
-            title = {
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    maxLines = 1,
+    TopAppBar(
+        navigationIcon = {
+            IconButton(
+                onClick = { scope.launch { drawerState.open() } },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = null,
                 )
-            },
-        )
-    }
+            }
+        },
+        title = {
+            Text(
+                text = stringResource(id = R.string.app_name),
+                maxLines = 1,
+            )
+        },
+    )
 }
 
 @Composable
@@ -123,7 +120,9 @@ private fun BottomNavigationBar(
     pagerState: PagerState,
     onSelected: (Int) -> Unit,
 ) {
-    NavigationBar {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+    ) {
         NavigationBarItem(
             selected = pagerState.currentPage == 0,
             onClick = { onSelected(0) },
