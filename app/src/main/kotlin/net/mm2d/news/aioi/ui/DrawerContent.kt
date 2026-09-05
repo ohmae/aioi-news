@@ -119,7 +119,7 @@ fun DrawerContent(
                         Spacer(modifier = Modifier.weight(1f))
                         Surface(
                             shape = MaterialTheme.shapes.large,
-                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            color = MaterialTheme.colorScheme.primaryContainer,
                         ) {
                             Text(
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
