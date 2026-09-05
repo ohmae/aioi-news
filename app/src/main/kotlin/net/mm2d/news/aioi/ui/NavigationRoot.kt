@@ -10,14 +10,10 @@ package net.mm2d.news.aioi.ui
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
-import net.mm2d.news.aioi.ui.theme.NavigationSpec
 
 @Serializable
 private sealed interface MainNavKey : NavKey {
@@ -39,16 +35,8 @@ fun NavigationRoot() {
         onBackPressedDispatcher?.onBackPressed()
     }
     val entryProvider = remember(navigator) { mainEntryProvider(navigator) }
-    NavDisplay(
-        backStack = navigator.backStack,
-        onBack = { navigator.goBack() },
-        entryDecorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator(),
-        ),
-        transitionSpec = NavigationSpec.push(),
-        popTransitionSpec = NavigationSpec.pop(),
-        predictivePopTransitionSpec = NavigationSpec.predictivePop(),
+    NavigationDisplay(
+        navigator = navigator,
         entryProvider = entryProvider,
     )
 }
@@ -57,14 +45,14 @@ private fun mainEntryProvider(
     navigator: Navigator<MainNavKey>,
 ): (MainNavKey) -> NavEntry<MainNavKey> =
     entryProvider {
-        entry<MainNavKey.Main> {
+        navigator.entry<MainNavKey.Main> {
             MainScreen(
                 navigateToLicense = {
                     navigator.navigate(MainNavKey.License)
                 },
             )
         }
-        entry<MainNavKey.License> { navKey ->
+        navigator.entry<MainNavKey.License> { navKey ->
             LicenseScreen(
                 popBackStack = {
                     navigator.goBack(navKey)

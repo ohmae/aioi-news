@@ -8,10 +8,18 @@
 package net.mm2d.news.aioi.ui
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -40,15 +48,44 @@ class Navigator<T : NavKey>(
     private val navGraph: NavGraph<T>,
     private val onExit: () -> Unit,
 ) {
+    private val entryLifecycles = mutableMapOf<T, Lifecycle>()
+    private var pendingNavigation: (() -> Unit)? = null
+    internal var isNavigationReady by mutableStateOf(false)
+        private set
+
     fun goBack(
         from: T? = null,
     ) {
+        navigateBack(from)
+    }
+
+    internal fun onSystemBack(
+        isPredictiveBack: Boolean,
+        popCount: Int = 1,
+    ) {
+        navigateBack(from = null, requireNavigationReady = !isPredictiveBack, popCount = popCount)
+    }
+
+    private fun navigateBack(
+        from: T?,
+        requireNavigationReady: Boolean = true,
+        popCount: Int = 1,
+    ) {
+        if (popCount <= 0) return
         if (from != null && backStack.lastOrNull() != from) {
-            Log.v("Navigator", "goBack from $from was ignored because current top is ${backStack.lastOrNull()}")
+            Log.v("Navigator", "goBack from $from was ignored: current top is ${backStack.lastOrNull()}")
+            return
+        }
+        if (requireNavigationReady && !isNavigationReady) {
+            enqueueNavigation { navigateBack(from, popCount = popCount) }
             return
         }
         if (backStack.size > 1) {
-            backStack.removeLastOrNull()
+            // Scene単位の戻る操作は、途中で遷移ガードを再評価せず一括で処理する。
+            repeat(popCount.coerceAtMost(backStack.size - 1)) {
+                backStack.removeLastOrNull()
+            }
+            updateNavigationReadiness()
         } else {
             onExit()
         }
@@ -67,7 +104,73 @@ class Navigator<T : NavKey>(
             Log.e("Navigator", "from: $from, to: $to is not allowed.")
             return
         }
+        if (!isNavigationReady) {
+            enqueueNavigation { navigate(to) }
+            return
+        }
         backStack.add(to)
+        updateNavigationReadiness()
+    }
+
+    private fun enqueueNavigation(
+        action: () -> Unit,
+    ) {
+        // 遷移中の操作は先着1件だけ保留する。
+        if (pendingNavigation == null) {
+            pendingNavigation = action
+        }
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun attachLifecycle(
+        key: T,
+        lifecycle: Lifecycle,
+    ) {
+        entryLifecycles[key] = lifecycle
+        updateNavigationReadiness()
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun detachLifecycle(
+        key: T,
+        lifecycle: Lifecycle,
+    ) {
+        entryLifecycles.remove(key, lifecycle)
+        updateNavigationReadiness()
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun updateNavigationReadiness() {
+        // 現在の画面がRESUMEDになったら保留していた操作を実行する。
+        val current = backStack.lastOrNull()
+        isNavigationReady = entryLifecycles[current]?.currentState == Lifecycle.State.RESUMED
+        if (isNavigationReady) {
+            val action = pendingNavigation
+            pendingNavigation = null
+            action?.invoke()
+        }
+    }
+
+    context(entryProviderScope: EntryProviderScope<T>)
+    internal inline fun <reified K : T> entry(
+        noinline content: @Composable (K) -> Unit,
+    ) {
+        entryProviderScope.entry<K> { key ->
+            // 各entryのライフサイクルを監視
+            val lifecycle = LocalLifecycleOwner.current.lifecycle
+            DisposableEffect(this@Navigator, key, lifecycle) {
+                attachLifecycle(key, lifecycle)
+                val observer = LifecycleEventObserver { _, _ ->
+                    updateNavigationReadiness()
+                }
+                lifecycle.addObserver(observer)
+                onDispose {
+                    lifecycle.removeObserver(observer)
+                    detachLifecycle(key, lifecycle)
+                }
+            }
+            content(key)
+        }
     }
 }
 
