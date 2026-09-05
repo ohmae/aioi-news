@@ -29,23 +29,31 @@ object NavigationSpec {
     fun <T : Any> pop(): TransitionSpec<T> = { popTransform() }
     fun <T : Any> predictivePop(): PredictiveTransitionSpec<T> = { popTransform(it.toDirection()) }
 
-    private fun foregroundOffset(direction: Int = 1): (Int) -> Int = { it * direction }
-    private fun backgroundOffset(direction: Int = 1): (Int) -> Int = { -it / 5 * direction }
+    private fun foregroundOffset(
+        direction: Int = 1,
+    ): (Int) -> Int = { it * direction }
+
+    private fun backgroundOffset(
+        direction: Int = 1,
+    ): (Int) -> Int = { -it / 5 * direction }
     private fun @SwipeEdge Int.toDirection(): Int = if (this == NavigationEvent.EDGE_LEFT) 1 else -1
     private fun <T> animationSpec(): FiniteAnimationSpec<T> = tween(durationMillis = 300)
 
-    private fun pushTransform(): ContentTransform = ContentTransform(
-        targetContentEnter = slideInHorizontally(
-            animationSpec = animationSpec(),
-            initialOffsetX = foregroundOffset(),
-        ),
-        initialContentExit = slideOutHorizontally(
-            animationSpec = animationSpec(),
-            targetOffsetX = backgroundOffset(),
-        ) + veilOut(animationSpec = tween()),
-    )
+    private fun pushTransform(): ContentTransform =
+        ContentTransform(
+            targetContentEnter = slideInHorizontally(
+                animationSpec = animationSpec(),
+                initialOffsetX = foregroundOffset(),
+            ),
+            initialContentExit = slideOutHorizontally(
+                animationSpec = animationSpec(),
+                targetOffsetX = backgroundOffset(),
+            ) + veilOut(animationSpec = tween()),
+        )
 
-    private fun popTransform(direction: Int = 1): ContentTransform =
+    private fun popTransform(
+        direction: Int = 1,
+    ): ContentTransform =
         ContentTransform(
             targetContentEnter = slideInHorizontally(
                 animationSpec = animationSpec(),

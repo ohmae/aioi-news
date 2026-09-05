@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import net.mm2d.news.aioi.R
+import net.mm2d.news.aioi.ui.modifier.drawVerticalFadingEdges
 import net.mm2d.news.aioi.util.Launcher
 import net.mm2d.news.aioi.util.doOnStop
 import net.mm2d.news.core.RssFeed
@@ -56,9 +58,13 @@ fun WhatsNewPage(
     viewModel: WhatsNewViewModel = hiltViewModel(),
 ) {
     val feed: RssFeed by viewModel.feedStream().collectAsState()
+    val listState = rememberLazyListState()
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .drawVerticalFadingEdges(listState),
         contentPadding = PaddingValues(vertical = 6.dp),
+        state = listState,
     ) {
         items(feed.items) { item ->
             Item(
@@ -107,9 +113,9 @@ private fun LazyItemScope.Item(
             },
             shape = MaterialTheme.shapes.medium,
             color = if (item.visited) {
-                MaterialTheme.colorScheme.surfaceContainerLowest
+                MaterialTheme.colorScheme.surfaceContainerLow
             } else {
-                MaterialTheme.colorScheme.surfaceContainer
+                MaterialTheme.colorScheme.surfaceContainerHigh
             },
         ) {
             ItemContent(
