@@ -36,7 +36,7 @@ object NavigationSpec {
     private fun backgroundOffset(
         direction: Int = 1,
     ): (Int) -> Int = { -it / 5 * direction }
-    private fun @SwipeEdge Int.toDirection(): Int = if (this == NavigationEvent.EDGE_LEFT) 1 else -1
+    private fun @SwipeEdge Int.toDirection(): Int = if (this == NavigationEvent.EDGE_RIGHT) -1 else 1
     private fun <T> animationSpec(): FiniteAnimationSpec<T> = tween(durationMillis = 300)
 
     private fun pushTransform(): ContentTransform =
