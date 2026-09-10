@@ -8,7 +8,6 @@
 package net.mm2d.news.aioi.ui
 
 import android.util.Log
-import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -19,8 +18,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import kotlin.reflect.KClass
@@ -33,8 +33,45 @@ fun <T : NavKey> rememberNavigator(
 ): Navigator<T> {
     @Suppress("UNCHECKED_CAST")
     val backStack = rememberNavBackStack(initialKey) as NavBackStack<T>
+    return rememberNavigator(
+        backStack = backStack,
+        navGraph = navGraph,
+        onExit = onExit,
+    )
+}
+
+@Composable
+fun <T : NavKey> rememberNavigator(
+    initialKeys: List<T>,
+    navGraph: NavGraph<T>,
+    onExit: () -> Unit,
+): Navigator<T> {
+    require(initialKeys.isNotEmpty()) { "initialKeys must not be empty" }
+    @Suppress("UNCHECKED_CAST")
+    val backStack =
+        if (initialKeys.size == 1) {
+            rememberNavBackStack(initialKeys[0])
+        } else {
+            rememberNavBackStack(*initialKeys.toTypedArray<NavKey>())
+        } as NavBackStack<T>
+    return rememberNavigator(
+        backStack = backStack,
+        navGraph = navGraph,
+        onExit = onExit,
+    )
+}
+
+/**
+ * [backStack]はコピーせず保存・復元と共有するため、渡した後の変更はNavigatorに限定する。
+ */
+@Composable
+fun <T : NavKey> rememberNavigator(
+    backStack: NavBackStack<T>,
+    navGraph: NavGraph<T>,
+    onExit: () -> Unit,
+): Navigator<T> {
     val currentOnExit by rememberUpdatedState(onExit)
-    return remember(navGraph) {
+    return remember(backStack, navGraph) {
         Navigator(
             backStack = backStack,
             navGraph = navGraph,
@@ -43,15 +80,63 @@ fun <T : NavKey> rememberNavigator(
     }
 }
 
+@Composable
+fun <T : NavKey> rememberNavigatorNavEntryDecorator(
+    navigator: Navigator<T>,
+): NavEntryDecorator<T> =
+    remember(navigator) {
+        NavEntryDecorator { entry ->
+            NavEntry(
+                navEntry = entry,
+                content = { key ->
+                    val lifecycle = LocalLifecycleOwner.current.lifecycle
+                    DisposableEffect(navigator, key, lifecycle) {
+                        navigator.attachLifecycle(key, lifecycle)
+                        val observer = LifecycleEventObserver { _, _ ->
+                            navigator.updateNavigationReadiness()
+                        }
+                        lifecycle.addObserver(observer)
+                        onDispose {
+                            lifecycle.removeObserver(observer)
+                            navigator.detachLifecycle(key, lifecycle)
+                        }
+                    }
+                    entry.Content()
+                },
+            ).Content()
+        }
+    }
+
+/**
+ * @param backStack 保存・復元に使用するバックスタック。渡した後の変更はNavigatorに限定する。
+ */
 class Navigator<T : NavKey>(
-    val backStack: NavBackStack<T>,
+    backStack: NavBackStack<T>,
     private val navGraph: NavGraph<T>,
     private val onExit: () -> Unit,
 ) {
+    private val mutableBackStack = backStack
+    val backStack: List<T> = mutableBackStack
+
     private val entryLifecycles = mutableMapOf<T, Lifecycle>()
     private var pendingNavigation: (() -> Unit)? = null
     internal var isNavigationReady by mutableStateOf(false)
         private set
+
+    fun canNavigate(
+        to: T,
+    ): Boolean {
+        val from = backStack.lastOrNull() ?: return false
+        return from != to && navGraph.canNavigate(from, to)
+    }
+
+    fun canGoBack(
+        from: T? = null,
+    ): Boolean {
+        val current = backStack.lastOrNull() ?: return false
+        if (from != null && current != from) return false
+        return backStack.size > 1
+    }
 
     fun goBack(
         from: T? = null,
@@ -80,10 +165,12 @@ class Navigator<T : NavKey>(
             enqueueNavigation { navigateBack(from, popCount = popCount) }
             return
         }
+        // 予測型戻るが保留操作に先行した場合、戻り先で古い操作を実行しない。
+        pendingNavigation = null
         if (backStack.size > 1) {
             // Scene単位の戻る操作は、途中で遷移ガードを再評価せず一括で処理する。
             repeat(popCount.coerceAtMost(backStack.size - 1)) {
-                backStack.removeLastOrNull()
+                mutableBackStack.removeLastOrNull()
             }
             updateNavigationReadiness()
         } else {
@@ -94,8 +181,7 @@ class Navigator<T : NavKey>(
     fun navigate(
         to: T,
     ) {
-        if (backStack.isEmpty()) return
-        val from = backStack.last()
+        val from = backStack.lastOrNull() ?: return
         if (from == to) {
             Log.v("Navigator", "from: $from, to: $to is same.")
             return // 連打無効
@@ -108,7 +194,7 @@ class Navigator<T : NavKey>(
             enqueueNavigation { navigate(to) }
             return
         }
-        backStack.add(to)
+        mutableBackStack.add(to)
         updateNavigationReadiness()
     }
 
@@ -121,7 +207,6 @@ class Navigator<T : NavKey>(
         }
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun attachLifecycle(
         key: T,
         lifecycle: Lifecycle,
@@ -130,7 +215,6 @@ class Navigator<T : NavKey>(
         updateNavigationReadiness()
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun detachLifecycle(
         key: T,
         lifecycle: Lifecycle,
@@ -139,7 +223,6 @@ class Navigator<T : NavKey>(
         updateNavigationReadiness()
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun updateNavigationReadiness() {
         // 現在の画面がRESUMEDになったら保留していた操作を実行する。
         val current = backStack.lastOrNull()
@@ -148,28 +231,6 @@ class Navigator<T : NavKey>(
             val action = pendingNavigation
             pendingNavigation = null
             action?.invoke()
-        }
-    }
-
-    context(entryProviderScope: EntryProviderScope<T>)
-    internal inline fun <reified K : T> entry(
-        noinline content: @Composable (K) -> Unit,
-    ) {
-        entryProviderScope.entry<K> { key ->
-            // 各entryのライフサイクルを監視
-            val lifecycle = LocalLifecycleOwner.current.lifecycle
-            DisposableEffect(this@Navigator, key, lifecycle) {
-                attachLifecycle(key, lifecycle)
-                val observer = LifecycleEventObserver { _, _ ->
-                    updateNavigationReadiness()
-                }
-                lifecycle.addObserver(observer)
-                onDispose {
-                    lifecycle.removeObserver(observer)
-                    detachLifecycle(key, lifecycle)
-                }
-            }
-            content(key)
         }
     }
 }
@@ -195,20 +256,24 @@ private class NavGraphImpl<T : NavKey>(
 }
 
 class NavGraphBuilder<T : NavKey> {
-    private val graph = mutableMapOf<KClass<out T>, Set<KClass<out T>>>()
-    internal fun build(): Map<KClass<out T>, Set<KClass<out T>>> = graph.toMap()
+    private val graph = mutableMapOf<KClass<out T>, MutableSet<KClass<out T>>>()
+    internal fun build(): Map<KClass<out T>, Set<KClass<out T>>> = graph.mapValues { it.value.toSet() }
+
+    infix fun KClass<out T>.leadsTo(
+        destinations: Collection<KClass<out T>>,
+    ) {
+        graph.getOrPut(this) { mutableSetOf() }.addAll(destinations)
+    }
 
     infix fun KClass<out T>.leadsTo(
         destination: KClass<out T>,
     ) {
-        val key = this
-        graph[key] = graph[key]?.let { it + destination } ?: setOf(destination)
+        graph.getOrPut(this) { mutableSetOf() }.add(destination)
     }
 
-    infix fun KClass<out T>.leadsTo(
-        destinations: Set<KClass<out T>>,
+    fun KClass<out T>.leadsTo(
+        vararg destinations: KClass<out T>,
     ) {
-        val key = this
-        graph[key] = graph[key]?.let { it + destinations } ?: destinations
+        graph.getOrPut(this) { mutableSetOf() }.addAll(destinations)
     }
 }

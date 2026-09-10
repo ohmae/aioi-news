@@ -31,7 +31,6 @@ import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.scene.rememberSceneState
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigationevent.NavigationEventTransitionState
-import androidx.navigationevent.NavigationEventTransitionState.InProgress
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.NavigationEventState
 import androidx.navigationevent.compose.rememberNavigationEventState
@@ -57,10 +56,14 @@ fun <T : NavKey> NavigationDisplay(
     predictivePopTransitionSpec: PredictiveTransitionSpec<T> = NavigationSpec.predictivePop(),
     entryProvider: (key: T) -> NavEntry<T>,
 ) {
-    // 画面ごとの保存可能な状態とViewModelをEntryに紐付け、Sceneが切り替わっても保持できるようにする。
+    // 画面ごとの保存可能な状態とViewModel、Navigatorのライフサイクル監視をEntryに紐付ける。
+    val navigatorDecorator = rememberNavigatorNavEntryDecorator(navigator)
+    val allDecorators = remember(entryDecorators, navigatorDecorator) {
+        entryDecorators + navigatorDecorator
+    }
     val entries = rememberDecoratedNavEntries(
         backStack = navigator.backStack,
-        entryDecorators = entryDecorators,
+        entryDecorators = allDecorators,
         entryProvider = entryProvider,
     )
     // Transition中の画面遷移は無効化するが、
@@ -130,7 +133,7 @@ fun <T : NavKey> NavigationDisplay(
 
 private fun NavigationEventState<*>.isPredictiveBackInProgress(): Boolean {
     val state = transitionState
-    if (state !is InProgress) return false
+    if (state !is NavigationEventTransitionState.InProgress) return false
     // 前方への遷移を、Navigatorの遷移中ガードを解除できる予測型戻るとして扱わない。
     return state.direction == NavigationEventTransitionState.TRANSITIONING_BACK
 }

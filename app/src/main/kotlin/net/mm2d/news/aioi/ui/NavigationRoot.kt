@@ -45,14 +45,14 @@ private fun mainEntryProvider(
     navigator: Navigator<MainNavKey>,
 ): (MainNavKey) -> NavEntry<MainNavKey> =
     entryProvider {
-        navigator.entry<MainNavKey.Main> {
+        entry<MainNavKey.Main> {
             MainScreen(
                 navigateToLicense = {
                     navigator.navigate(MainNavKey.License)
                 },
             )
         }
-        navigator.entry<MainNavKey.License> { navKey ->
+        entry<MainNavKey.License> { navKey ->
             LicenseScreen(
                 popBackStack = {
                     navigator.goBack(navKey)
