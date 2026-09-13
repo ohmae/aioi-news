@@ -109,7 +109,13 @@ dependencies {
 
     debugImplementation(libs.okhttpLoggingInterceptor)
 
+    testImplementation(libs.androidxComposeUiTestJunit4)
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.truth)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidxJunit)
+    testImplementation(libs.kotlinxCoroutinesTest)
 
     implementation(libs.profileInstaller)
     baselineProfile(projects.baselineProfile)

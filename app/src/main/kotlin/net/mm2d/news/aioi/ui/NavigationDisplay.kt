@@ -8,6 +8,7 @@
 package net.mm2d.news.aioi.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SizeTransform
 import androidx.compose.runtime.Composable
@@ -131,7 +132,8 @@ fun <T : NavKey> NavigationDisplay(
     )
 }
 
-private fun NavigationEventState<*>.isPredictiveBackInProgress(): Boolean {
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal fun NavigationEventState<*>.isPredictiveBackInProgress(): Boolean {
     val state = transitionState
     if (state !is NavigationEventTransitionState.InProgress) return false
     // 前方への遷移を、Navigatorの遷移中ガードを解除できる予測型戻るとして扱わない。

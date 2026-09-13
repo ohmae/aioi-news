@@ -255,25 +255,35 @@ private class NavGraphImpl<T : NavKey>(
     ): Boolean = graph[from::class]?.contains(to::class) == true
 }
 
+@DslMarker
+annotation class NavGraphDsl
+
+@NavGraphDsl
 class NavGraphBuilder<T : NavKey> {
     private val graph = mutableMapOf<KClass<out T>, MutableSet<KClass<out T>>>()
     internal fun build(): Map<KClass<out T>, Set<KClass<out T>>> = graph.mapValues { it.value.toSet() }
 
-    infix fun KClass<out T>.leadsTo(
-        destinations: Collection<KClass<out T>>,
+    @PublishedApi
+    internal fun addTransition(
+        from: KClass<out T>,
+        to: KClass<out T>,
     ) {
-        graph.getOrPut(this) { mutableSetOf() }.addAll(destinations)
+        graph.getOrPut(from) { mutableSetOf() }.add(to)
     }
 
-    infix fun KClass<out T>.leadsTo(
-        destination: KClass<out T>,
+    inline fun <reified From : T> from(
+        action: NavGraphNodeScope<T>.() -> Unit,
     ) {
-        graph.getOrPut(this) { mutableSetOf() }.add(destination)
+        NavGraphNodeScope(this, From::class).apply(action)
     }
+}
 
-    fun KClass<out T>.leadsTo(
-        vararg destinations: KClass<out T>,
-    ) {
-        graph.getOrPut(this) { mutableSetOf() }.addAll(destinations)
+@NavGraphDsl
+class NavGraphNodeScope<T : NavKey> @PublishedApi internal constructor(
+    @PublishedApi internal val builder: NavGraphBuilder<T>,
+    @PublishedApi internal val fromClass: KClass<out T>,
+) {
+    inline fun <reified To : T> to() {
+        builder.addTransition(fromClass, To::class)
     }
 }
