@@ -340,7 +340,7 @@ class NavigationDisplayTest {
     fun `NavigationDisplay 複数Entryを表示するSceneではシステム戻るでSceneの戻り先まで取り除くこと`() {
         val controller = Robolectric.buildActivity(ComponentActivity::class.java).setup()
         val navigator = createChildNavigator(NavBackStack(TestNavKey.Main, TestNavKey.Details, TestNavKey.Child))
-        val strategy = SceneStrategy<TestNavKey> { entries ->
+        val strategy = SceneStrategy { entries ->
             if (entries.size == 3) PairScene(entries.takeLast(2), entries.take(1)) else null
         }
         try {

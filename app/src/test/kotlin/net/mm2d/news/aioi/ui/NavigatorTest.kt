@@ -390,7 +390,7 @@ class NavigatorTest {
 
     @Test
     fun `rememberNavigator 保存後の再生成で引数と順序を復元し復元先から戻れること`() {
-        val graph = navGraph<TestNavKey> {
+        val graph = navGraph {
             from<TestNavKey.Details> { to<TestNavKey.Item>() }
         }
         lateinit var navigator: Navigator<TestNavKey>
@@ -505,7 +505,7 @@ class NavigatorTest {
 
     @Test
     fun `navGraph node 単一の宛先を登録できること`() {
-        val graph = navGraph<TestNavKey> {
+        val graph = navGraph {
             from<TestNavKey.Main> {
                 to<TestNavKey.Details>()
             }
@@ -518,7 +518,7 @@ class NavigatorTest {
 
     @Test
     fun `navGraph node 同一起点への複数回設定で宛先がマージされること`() {
-        val graph = navGraph<TestNavKey> {
+        val graph = navGraph {
             from<TestNavKey.Main> {
                 to<TestNavKey.Details>()
             }
