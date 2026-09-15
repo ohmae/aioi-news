@@ -86,18 +86,17 @@ fun <T : NavKey> NavigationDisplay(
         currentInfo = SceneInfo(scene),
         backInfo = sceneState.previousScenes.map { SceneInfo(it) },
     )
-    val isPredictiveBackInProgress = navigationEventState.isPredictiveBackInProgress()
+    val isPredictiveBackActive = navigationEventState.isPredictiveBackInProgress()
     // Compositionが反映された後に開始を記録する。進行状態が終了しても、ここでは記録を消さない。
-    SideEffect(isPredictiveBackInProgress) {
-        if (isPredictiveBackInProgress) {
+    SideEffect(isPredictiveBackActive) {
+        if (isPredictiveBackActive) {
             hasPredictiveBackStarted = true
         }
     }
     // Transition中の戻る操作を無効化させる。
     // ただし、予測型戻るのジェスチャー中はTransition中だが、無効化してしまうと戻る操作が確定できなくなる。
     val isBackNavigationEnabled =
-        scene.previousEntries.isNotEmpty() &&
-            (navigator.isNavigationReady || isPredictiveBackInProgress)
+        scene.previousEntries.isNotEmpty() && navigator.isNavigationReady
 
     NavigationBackHandler(
         state = navigationEventState,
@@ -107,11 +106,11 @@ fun <T : NavKey> NavigationDisplay(
         },
         onBackCompleted = {
             // 次の操作に判定を持ち越さず、今回の戻る処理には開始時の記録を渡す。
-            val wasPredictiveBack = hasPredictiveBackStarted
+            val fromPredictiveBack = hasPredictiveBackStarted
             hasPredictiveBackStarted = false
             // Sceneは複数のEntryを含み得るため、1件固定ではなく戻り先との差分だけスタックを取り除く。
             navigator.onSystemBack(
-                isPredictiveBack = wasPredictiveBack,
+                fromPredictiveBack = fromPredictiveBack,
                 popCount = entries.size - scene.previousEntries.size,
             )
         },

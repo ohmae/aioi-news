@@ -145,10 +145,10 @@ class Navigator<T : NavKey>(
     }
 
     internal fun onSystemBack(
-        isPredictiveBack: Boolean,
+        fromPredictiveBack: Boolean,
         popCount: Int = 1,
     ) {
-        navigateBack(from = null, requireNavigationReady = !isPredictiveBack, popCount = popCount)
+        navigateBack(from = null, requireNavigationReady = !fromPredictiveBack, popCount = popCount)
     }
 
     private fun navigateBack(

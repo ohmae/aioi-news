@@ -159,11 +159,11 @@ class NavigatorTest {
         val navigator = createNavigator(backStack)
         navigator.attachLifecycle(TestNavKey.Details, lifecycle(Lifecycle.State.STARTED))
 
-        navigator.onSystemBack(isPredictiveBack = false)
+        navigator.onSystemBack(fromPredictiveBack = false)
 
         assertThat(backStack).containsExactly(TestNavKey.Main, TestNavKey.Details).inOrder()
 
-        navigator.onSystemBack(isPredictiveBack = true)
+        navigator.onSystemBack(fromPredictiveBack = true)
 
         assertThat(backStack).containsExactly(TestNavKey.Main)
     }
@@ -177,8 +177,8 @@ class NavigatorTest {
         navigator.attachLifecycle(TestNavKey.Details, lifecycle(Lifecycle.State.STARTED))
         navigator.attachLifecycle(TestNavKey.Child, lifecycle(Lifecycle.State.RESUMED))
 
-        navigator.onSystemBack(isPredictiveBack = false, popCount = 2)
-        navigator.onSystemBack(isPredictiveBack = false)
+        navigator.onSystemBack(fromPredictiveBack = false, popCount = 2)
+        navigator.onSystemBack(fromPredictiveBack = false)
 
         assertThat(backStack).containsExactly(TestNavKey.Main)
         assertThat(navigator.isNavigationReady).isFalse()
@@ -191,11 +191,11 @@ class NavigatorTest {
         val navigator = createNavigator(backStack)
         navigator.attachLifecycle(TestNavKey.Child, lifecycle(Lifecycle.State.STARTED))
 
-        navigator.onSystemBack(isPredictiveBack = false, popCount = 2)
+        navigator.onSystemBack(fromPredictiveBack = false, popCount = 2)
 
         assertThat(backStack).containsExactly(TestNavKey.Main, TestNavKey.Details, TestNavKey.Child).inOrder()
 
-        navigator.onSystemBack(isPredictiveBack = true, popCount = 2)
+        navigator.onSystemBack(fromPredictiveBack = true, popCount = 2)
 
         assertThat(backStack).containsExactly(TestNavKey.Main)
     }
@@ -207,7 +207,7 @@ class NavigatorTest {
         val navigator = createNavigator(backStack) { exited = true }
         navigator.attachLifecycle(TestNavKey.Details, lifecycle(Lifecycle.State.RESUMED))
 
-        navigator.onSystemBack(isPredictiveBack = false, popCount = 10)
+        navigator.onSystemBack(fromPredictiveBack = false, popCount = 10)
 
         assertThat(backStack).containsExactly(TestNavKey.Main)
         assertThat(exited).isFalse()
@@ -220,8 +220,8 @@ class NavigatorTest {
         val navigator = createNavigator(backStack) { exited = true }
         navigator.attachLifecycle(TestNavKey.Main, lifecycle(Lifecycle.State.RESUMED))
 
-        navigator.onSystemBack(isPredictiveBack = false, popCount = 0)
-        navigator.onSystemBack(isPredictiveBack = false, popCount = -1)
+        navigator.onSystemBack(fromPredictiveBack = false, popCount = 0)
+        navigator.onSystemBack(fromPredictiveBack = false, popCount = -1)
 
         assertThat(backStack).containsExactly(TestNavKey.Main)
         assertThat(exited).isFalse()
@@ -264,7 +264,7 @@ class NavigatorTest {
         val navigator = createNavigator(backStack)
         navigator.attachLifecycle(TestNavKey.Child, lifecycle(Lifecycle.State.STARTED))
 
-        navigator.onSystemBack(isPredictiveBack = false, popCount = 2)
+        navigator.onSystemBack(fromPredictiveBack = false, popCount = 2)
         navigator.attachLifecycle(TestNavKey.Child, lifecycle(Lifecycle.State.RESUMED))
 
         assertThat(backStack).containsExactly(TestNavKey.Main)
@@ -278,7 +278,7 @@ class NavigatorTest {
         navigator.attachLifecycle(TestNavKey.Details, lifecycle(Lifecycle.State.STARTED))
 
         navigator.goBack()
-        navigator.onSystemBack(isPredictiveBack = true)
+        navigator.onSystemBack(fromPredictiveBack = true)
         navigator.attachLifecycle(TestNavKey.Main, lifecycle(Lifecycle.State.RESUMED))
 
         assertThat(backStack).containsExactly(TestNavKey.Main)
@@ -302,7 +302,7 @@ class NavigatorTest {
         navigator.attachLifecycle(TestNavKey.Child, lifecycle(Lifecycle.State.STARTED))
 
         navigator.navigate(TestNavKey.Main)
-        navigator.onSystemBack(isPredictiveBack = true)
+        navigator.onSystemBack(fromPredictiveBack = true)
         navigator.attachLifecycle(TestNavKey.Details, lifecycle(Lifecycle.State.RESUMED))
 
         assertThat(backStack).containsExactly(TestNavKey.Main, TestNavKey.Details).inOrder()
