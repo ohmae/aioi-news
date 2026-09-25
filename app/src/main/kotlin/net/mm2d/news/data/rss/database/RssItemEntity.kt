@@ -9,8 +9,13 @@ package net.mm2d.news.data.rss.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 
-@Entity(tableName = "items", primaryKeys = ["id", "feed"])
+@Entity(
+    tableName = "items",
+    primaryKeys = ["id", "feed"],
+    indices = [Index(value = ["feed", "created"])],
+)
 data class RssItemEntity(
     @ColumnInfo(name = "id")
     val id: String,

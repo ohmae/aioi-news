@@ -20,7 +20,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-@Suppress("NonAsciiCharacters")
+@Suppress("NonAsciiCharacters", "RemoveRedundantBackticks")
 class RssDaoTest {
     private lateinit var database: RssDatabase
     private lateinit var dao: RssDao
@@ -103,4 +103,58 @@ class RssDaoTest {
             assertThat(itemMap["item1"]?.visited).isTrue()
             assertThat(itemMap["item2"]?.visited).isFalse()
         }
+
+    @Test
+    fun `MIGRATION_1_2 でインデックスが正常に作成されること`() {
+        val helper =
+            androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory().create(
+                androidx.sqlite.db.SupportSQLiteOpenHelper.Configuration
+                    .builder(ApplicationProvider.getApplicationContext())
+                    .name(null)
+                    .callback(
+                        object : androidx.sqlite.db.SupportSQLiteOpenHelper.Callback(1) {
+                            override fun onCreate(
+                                db: androidx.sqlite.db.SupportSQLiteDatabase,
+                            ) {
+                                db.execSQL(
+                                    "CREATE TABLE IF NOT EXISTS `items` (" +
+                                        "`id` TEXT NOT NULL, " +
+                                        "`feed` TEXT NOT NULL, " +
+                                        "`created` INTEGER NOT NULL, " +
+                                        "`updated` INTEGER NOT NULL, " +
+                                        "`title` TEXT NOT NULL, " +
+                                        "`description` TEXT NOT NULL, " +
+                                        "`content` TEXT NOT NULL, " +
+                                        "`link` TEXT NOT NULL, " +
+                                        "`category` TEXT NOT NULL, " +
+                                        "`imageUrl` TEXT NOT NULL, " +
+                                        "`visited` INTEGER NOT NULL, " +
+                                        "PRIMARY KEY(`id`, `feed`))",
+                                )
+                            }
+
+                            override fun onUpgrade(
+                                db: androidx.sqlite.db.SupportSQLiteDatabase,
+                                oldVersion: Int,
+                                newVersion: Int,
+                            ) {
+                            }
+                        },
+                    ).build(),
+            )
+        val db = helper.writableDatabase
+        RssDatabase.MIGRATION_1_2.migrate(db)
+
+        val cursor = db.query("PRAGMA index_list('items')")
+        var hasIndex = false
+        while (cursor.moveToNext()) {
+            val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+            if (name == "index_items_feed_created") {
+                hasIndex = true
+            }
+        }
+        cursor.close()
+        db.close()
+        assertThat(hasIndex).isTrue()
+    }
 }

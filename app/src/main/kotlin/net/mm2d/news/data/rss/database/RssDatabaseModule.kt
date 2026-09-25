@@ -29,7 +29,8 @@ class RssDatabaseModule {
             context,
             RssDatabase::class.java,
             DB_NAME,
-        ).build()
+        ).addMigrations(RssDatabase.MIGRATION_1_2)
+            .build()
 
     companion object {
         const val DB_NAME = "rss.db"

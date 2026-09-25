@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.mm2d.news.aioi.R
 import net.mm2d.news.aioi.ui.modifier.drawVerticalFadingEdges
 import net.mm2d.news.aioi.util.Launcher
@@ -57,7 +57,7 @@ fun WhatsNewPage(
     modifier: Modifier = Modifier,
     viewModel: WhatsNewViewModel = hiltViewModel(),
 ) {
-    val feed: RssFeed by viewModel.feedStream().collectAsState()
+    val feed: RssFeed by viewModel.feedStream().collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     LazyColumn(
         modifier = modifier
@@ -66,7 +66,10 @@ fun WhatsNewPage(
         contentPadding = PaddingValues(vertical = 6.dp),
         state = listState,
     ) {
-        items(feed.items) { item ->
+        items(
+            items = feed.items,
+            key = { it.id },
+        ) { item ->
             Item(
                 item = item,
                 visit = viewModel::visit,
@@ -132,6 +135,9 @@ private fun ItemContent(
 ) {
     val now = Clock.System.now().toEpochMilliseconds()
     val isNew = !item.visited && now - item.created < newInterval
+    val formattedDate = remember(item.created) {
+        DateFormat.format("MM/dd HH:mm", item.created).toString()
+    }
     Row(
         modifier = Modifier
             .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
@@ -196,7 +202,7 @@ private fun ItemContent(
                     )
                 }
                 Text(
-                    text = DateFormat.format("MM/dd HH:mm", item.created).toString(),
+                    text = formattedDate,
                     color = textColor,
                     style = MaterialTheme.typography.labelSmall,
                 )

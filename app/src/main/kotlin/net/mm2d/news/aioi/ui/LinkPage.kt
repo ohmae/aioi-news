@@ -27,7 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.mm2d.news.aioi.R
 import net.mm2d.news.aioi.util.Launcher
 import net.mm2d.news.core.Link
@@ -46,13 +47,18 @@ fun LinkPage(
     modifier: Modifier = Modifier,
     viewModel: LinkViewModel = hiltViewModel(),
 ) {
-    viewModel.initialize()
-    val links by viewModel.getLinksStream().collectAsState()
+    SideEffect(Unit) {
+        viewModel.initialize()
+    }
+    val links by viewModel.getLinksStream().collectAsStateWithLifecycle()
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 6.dp),
     ) {
-        items(links) { link ->
+        items(
+            items = links,
+            key = { it.url },
+        ) { link ->
             Item(link = link)
         }
     }
