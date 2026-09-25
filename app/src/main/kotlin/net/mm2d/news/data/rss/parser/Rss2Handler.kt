@@ -61,10 +61,24 @@ class Rss2Handler(
     ) {
         textBuilder.setLength(0)
         path.push(uri, localName)
+        val tag = path.getOrNull(0) ?: return
         if (path.getOrNull(1).matches("", "channel") &&
-            path.getOrNull(0).matches("", "item")
+            tag.matches("", "item")
         ) {
             workItem = RssItemBuilder()
+            return
+        }
+        val workItem = workItem ?: return
+        if (path.getOrNull(2).matches("", "channel") &&
+            path.getOrNull(1).matches("", "item") &&
+            tag.matches("", "enclosure")
+        ) {
+            val url = attributes.getValue("url")
+            val type = attributes.getValue("type")
+            if (!url.isNullOrEmpty() && (type == null || type.startsWith("image/"))) {
+                workItem.imageUrl = url
+            }
+            return
         }
     }
 

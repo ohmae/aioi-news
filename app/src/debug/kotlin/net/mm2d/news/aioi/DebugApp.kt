@@ -11,24 +11,10 @@ import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
 import android.os.StrictMode.VmPolicy
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
-import net.mm2d.news.data.http.OkHttpInterceptorBridge
-import okhttp3.logging.HttpLoggingInterceptor
 
 class DebugApp : App() {
-    private val entryPoint: DebugAppEntryPoint by lazy {
-        EntryPointAccessors.fromApplication(this)
-    }
-    private val okHttpInterceptorBridge: OkHttpInterceptorBridge by lazy {
-        entryPoint.provideOkHttpInterceptorBridge()
-    }
-
     override fun initializeOverrideWhenDebug() {
         setUpStrictMode()
-        setUpOkHttp()
     }
 
     private fun setUpStrictMode() {
@@ -48,16 +34,4 @@ class DebugApp : App() {
                 detectCredentialProtectedWhileLocked()
             }
         }
-
-    private fun setUpOkHttp() {
-        okHttpInterceptorBridge.addInterceptor(
-            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY),
-        )
-    }
-
-    @InstallIn(SingletonComponent::class)
-    @EntryPoint
-    interface DebugAppEntryPoint {
-        fun provideOkHttpInterceptorBridge(): OkHttpInterceptorBridge
-    }
 }

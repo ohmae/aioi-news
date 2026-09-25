@@ -89,8 +89,25 @@ class AtomHandler(
         if (path.getOrNull(1).matches(nameSpaceAtom, "entry") &&
             tag.matches(nameSpaceAtom, "link")
         ) {
-            if (attributes.getValue("rel") == "alternate" || attributes.getValue("rel") == null) {
-                workItem.link = attributes.getValue("href") ?: ""
+            val rel = attributes.getValue("rel")
+            val type = attributes.getValue("type")
+            val href = attributes.getValue("href") ?: ""
+            if (rel == "alternate" || rel == null) {
+                workItem.link = href
+            } else if ((rel == "enclosure" || type?.startsWith("image/") == true) && workItem.imageUrl.isEmpty()) {
+                workItem.imageUrl = href
+            }
+            return
+        }
+
+        if (path.getOrNull(1).matches(nameSpaceAtom, "entry") &&
+            tag.matches(nameSpaceAtom, "category")
+        ) {
+            val label = attributes.getValue("label")?.ifEmpty { null }
+            val term = attributes.getValue("term")
+            val category = label ?: term
+            if (!category.isNullOrEmpty()) {
+                workItem.category = category
             }
             return
         }

@@ -10,14 +10,28 @@ package net.mm2d.news.data.rss.parser
 import net.mm2d.news.core.RssFeed
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
+import javax.xml.XMLConstants
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
 class RssParser {
     private fun createSaxParser(): SAXParser {
-        val factory = SAXParserFactory.newInstance()
-        factory.isNamespaceAware = true
-        factory.isValidating = false
+        val factory = SAXParserFactory.newInstance().apply {
+            isNamespaceAware = true
+            isValidating = false
+            runCatching {
+                setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
+            }
+            runCatching {
+                setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+            }
+            runCatching {
+                setFeature("http://xml.org/sax/features/external-general-entities", false)
+            }
+            runCatching {
+                setFeature("http://xml.org/sax/features/external-parameter-entities", false)
+            }
+        }
         return factory.newSAXParser()
     }
 

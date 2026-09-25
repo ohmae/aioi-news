@@ -11,6 +11,7 @@ import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsBytes
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -95,6 +96,8 @@ class RssRepositoryImpl(
                 val data = client.get(url).bodyAsBytes()
                 val result = RssParser().parse(url, data) ?: throw IllegalStateException("parse failed")
                 Result.success(result)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Result.failure(e)
             }

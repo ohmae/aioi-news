@@ -11,36 +11,34 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.Multibinds
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class OkHttpClientModule {
-    @Singleton
-    @Provides
-    fun provideOkHttpClient(
-        interceptorBridge: OkHttpInterceptorBridge,
-    ): OkHttpClient =
-        OkHttpClient.Builder()
-            .followRedirects(true)
-            .followSslRedirects(true)
-            .addNetworkInterceptors(interceptorBridge.networkInterceptors())
-            .addInterceptors(interceptorBridge.interceptors())
-            .build()
+interface OkHttpClientModule {
+    @Multibinds
+    fun bindInterceptors(): Set<Interceptor>
 
-    private fun OkHttpClient.Builder.addNetworkInterceptors(
-        interceptors: List<Interceptor>,
-    ): OkHttpClient.Builder =
-        apply {
-            interceptors.forEach { addNetworkInterceptor(it) }
-        }
+    @Multibinds
+    fun bindNetworkInterceptors(): Set<Interceptor>
 
-    private fun OkHttpClient.Builder.addInterceptors(
-        interceptors: List<Interceptor>,
-    ): OkHttpClient.Builder =
-        apply {
-            interceptors.forEach { addInterceptor(it) }
-        }
+    companion object {
+        @Singleton
+        @Provides
+        fun provideOkHttpClient(
+            interceptors: Set<@JvmSuppressWildcards Interceptor>,
+            networkInterceptors: Set<@JvmSuppressWildcards Interceptor>,
+        ): OkHttpClient =
+            OkHttpClient.Builder()
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .apply {
+                    interceptors.forEach { addInterceptor(it) }
+                    networkInterceptors.forEach { addNetworkInterceptor(it) }
+                }
+                .build()
+    }
 }
