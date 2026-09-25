@@ -100,7 +100,6 @@ dependencies {
     implementation(libs.androidxComposeUiToolingPreview)
     implementation(libs.androidxComposeMaterial3)
     implementation(libs.androidxComposeMaterialIconsCore)
-    implementation(libs.accompanistDrawablePainter)
 
     implementation(libs.material)
     implementation(libs.okhttp)

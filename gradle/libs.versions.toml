@@ -20,7 +20,6 @@ androidxRoom = "2.8.5"
 androidxComposeBom = "2026.09.00"
 androidxNavigation3 = "1.2.0"
 androidxHiltCompose = "1.4.0"
-accompanist = "0.37.3"
 material = "1.14.0"
 ktor = "3.6.0"
 okhttp = "5.5.0"
@@ -78,7 +77,6 @@ androidxComposeUiGraphics = { group = "androidx.compose.ui", name = "ui-graphics
 androidxComposeUiToolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidxComposeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
 androidxComposeMaterialIconsCore = { group = "androidx.compose.material", name = "material-icons-core" }
-accompanistDrawablePainter = { group = "com.google.accompanist", name = "accompanist-drawablepainter", version.ref = "accompanist" }
 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }

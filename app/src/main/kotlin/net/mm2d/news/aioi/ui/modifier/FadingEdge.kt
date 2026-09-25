@@ -10,6 +10,8 @@ package net.mm2d.news.aioi.ui.modifier
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -25,7 +27,7 @@ fun Modifier.drawVerticalFadingEdges(
     Modifier
         .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
         .drawWithCache {
-            val edgeLengthPx = edgeLength.toPx()
+            val edgeLengthPx = edgeLength.toPx().coerceAtMost(size.height / 2f)
             val backwardBrush = Brush.verticalGradient(
                 colors = listOf(Color(0x40000000), Color.Black),
                 startY = 0f,
@@ -41,12 +43,15 @@ fun Modifier.drawVerticalFadingEdges(
                 if (scrollableState.canScrollBackward) {
                     drawRect(
                         brush = backwardBrush,
+                        size = Size(size.width, edgeLengthPx),
                         blendMode = BlendMode.DstIn,
                     )
                 }
                 if (scrollableState.canScrollForward) {
                     drawRect(
                         brush = forwardBrush,
+                        topLeft = Offset(0f, size.height - edgeLengthPx),
+                        size = Size(size.width, edgeLengthPx),
                         blendMode = BlendMode.DstIn,
                     )
                 }

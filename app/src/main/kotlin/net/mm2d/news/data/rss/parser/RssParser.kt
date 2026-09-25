@@ -15,25 +15,10 @@ import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
 class RssParser {
-    private fun createSaxParser(): SAXParser {
-        val factory = SAXParserFactory.newInstance().apply {
-            isNamespaceAware = true
-            isValidating = false
-            runCatching {
-                setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
-            }
-            runCatching {
-                setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
-            }
-            runCatching {
-                setFeature("http://xml.org/sax/features/external-general-entities", false)
-            }
-            runCatching {
-                setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-            }
+    private fun createSaxParser(): SAXParser =
+        synchronized(factory) {
+            factory.newSAXParser()
         }
-        return factory.newSAXParser()
-    }
 
     fun parse(
         url: String,
@@ -87,6 +72,27 @@ class RssParser {
             length: Int,
         ) {
             handler?.characters(ch, start, length)
+        }
+    }
+
+    companion object {
+        private val factory: SAXParserFactory by lazy {
+            SAXParserFactory.newInstance().apply {
+                isNamespaceAware = true
+                isValidating = false
+                runCatching {
+                    setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
+                }
+                runCatching {
+                    setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+                }
+                runCatching {
+                    setFeature("http://xml.org/sax/features/external-general-entities", false)
+                }
+                runCatching {
+                    setFeature("http://xml.org/sax/features/external-parameter-entities", false)
+                }
+            }
         }
     }
 }
