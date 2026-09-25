@@ -20,7 +20,14 @@ import javax.inject.Inject
 class WhatsNewViewModel @Inject constructor(
     private val rssRepository: RssRepository,
 ) : ViewModel() {
-    fun feedStream(): StateFlow<RssFeed> = rssRepository.getStream(URL)
+    private var feedStream = rssRepository.getStream(URL)
+    fun feedStream(): StateFlow<RssFeed> = feedStream
+
+    fun onCreate() {
+        viewModelScope.launch {
+            rssRepository.updateIfNeed(URL)
+        }
+    }
 
     fun visit(
         id: String,

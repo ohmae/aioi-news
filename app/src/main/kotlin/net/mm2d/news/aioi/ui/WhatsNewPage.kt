@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -57,6 +58,9 @@ fun WhatsNewPage(
     modifier: Modifier = Modifier,
     viewModel: WhatsNewViewModel = hiltViewModel(),
 ) {
+    SideEffect(Unit) {
+        viewModel.onCreate()
+    }
     val feed: RssFeed by viewModel.feedStream().collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     LazyColumn(
@@ -134,10 +138,7 @@ private fun ItemContent(
     item: RssItem,
 ) {
     val now = Clock.System.now().toEpochMilliseconds()
-    val isNew = !item.visited && now - item.created < newInterval
-    val formattedDate = remember(item.created) {
-        DateFormat.format("MM/dd HH:mm", item.created).toString()
-    }
+    val isNew = !item.visited && item.created != 0L && now - item.created < newInterval
     Row(
         modifier = Modifier
             .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp)
@@ -201,11 +202,16 @@ private fun ItemContent(
                         modifier = Modifier.padding(end = 8.dp),
                     )
                 }
-                Text(
-                    text = formattedDate,
-                    color = textColor,
-                    style = MaterialTheme.typography.labelSmall,
-                )
+                if (item.created != 0L) {
+                    val formattedDate = remember(item.created) {
+                        DateFormat.format("MM/dd HH:mm", item.created).toString()
+                    }
+                    Text(
+                        text = formattedDate,
+                        color = textColor,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
             }
         }
         Image(

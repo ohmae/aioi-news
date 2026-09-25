@@ -10,9 +10,6 @@ package net.mm2d.news.data.rss.parser
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssItem
 import org.xml.sax.Attributes
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 class Rss2Handler(
     url: String,
@@ -28,9 +25,13 @@ class Rss2Handler(
         if (builder.title.isEmpty()) return null
         val items = itemBuilders.mapNotNull { item ->
             if (item.title.isEmpty()) return@mapNotNull null
-            if (item.created == 0L) return@mapNotNull null
+            val id = if (item.created != 0L) {
+                item.created.toString() + ":" + item.link
+            } else {
+                item.idWithoutDate()
+            }
             RssItem(
-                id = item.created.toString() + ":" + item.link,
+                id = id,
                 created = item.created,
                 updated = item.created,
                 title = item.title,
@@ -169,6 +170,7 @@ class Rss2Handler(
             tag.matches("", "title") -> workItem.title = text
             tag.matches("", "description") -> workItem.description = text
             tag.matches("", "link") -> workItem.link = text
+            tag.matches("", "guid") -> workItem.id = text
             tag.matches("", "pubDate") -> workItem.created = parseDate(text)
             tag.matches("", "category") -> workItem.category = text
             tag.matches("", "image") -> workItem.imageUrl = text
@@ -187,12 +189,7 @@ class Rss2Handler(
 
     private fun parseDate(
         text: String,
-    ): Long =
-        try {
-            OffsetDateTime.parse(text, DateTimeFormatter.RFC_1123_DATE_TIME).toInstant().toEpochMilli()
-        } catch (_: DateTimeParseException) {
-            0L
-        }
+    ): Long = DateParser.parseRfc1123(text)
 
     companion object {
         private const val NS_CONTENT = "http://purl.org/rss/1.0/modules/content/"

@@ -47,6 +47,11 @@ interface RssDao {
         threshold: Long,
     )
 
+    @Query("DELETE FROM items WHERE feed = :feed AND created = 0")
+    suspend fun deleteUndatedItems(
+        feed: String,
+    )
+
     @Query("UPDATE items SET visited = :visited WHERE feed = :feed AND id = :id")
     suspend fun visit(
         feed: String,
@@ -78,10 +83,11 @@ interface RssDao {
                     if (visitedIds.contains(item.id)) item.copy(visited = true) else item
                 }
             }
-        val oldest = mergedItems.minOfOrNull { it.created }
+        val oldest = mergedItems.filter { it.created != 0L }.minOfOrNull { it.created }
         if (oldest != null) {
             deleteItems(feed.url, oldest)
         }
+        deleteUndatedItems(feed.url)
         insert(feed)
         insert(mergedItems)
     }

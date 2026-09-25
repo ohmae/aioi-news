@@ -11,6 +11,7 @@ import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsBytes
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssRepository
@@ -31,6 +31,8 @@ import net.mm2d.news.data.rss.converter.toRssItems
 import net.mm2d.news.data.rss.database.RssDao
 import net.mm2d.news.data.rss.database.RssDatabase
 import net.mm2d.news.data.rss.parser.RssParser
+import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
@@ -43,20 +45,21 @@ class RssRepositoryImpl(
     private val scope: CoroutineScope = CoroutineScope(dispatcher + SupervisorJob())
     private val dao: RssDao = database.dao()
 
-    private val streamMap: MutableMap<String, StateFlow<RssFeed>> = mutableMapOf()
+    private val streamMap: ConcurrentHashMap<String, StateFlow<RssFeed>> = ConcurrentHashMap()
 
     @OptIn(ExperimentalTime::class)
     override fun getStream(
         url: String,
-    ): StateFlow<RssFeed> {
-        scope.launch {
-            val now = Clock.System.now().toEpochMilliseconds()
-            val feed = dao.getFeed(url)
-            if (feed == null || now - feed.fetched > FETCH_INTERVAL) {
-                update(url)
-            }
+    ): StateFlow<RssFeed> = streamMap.computeIfAbsent(url) { create(url) }
+
+    override suspend fun updateIfNeed(
+        url: String,
+    ) {
+        val now = Clock.System.now().toEpochMilliseconds()
+        val feed = dao.getFeed(url)
+        if (feed == null || now - feed.fetched > FETCH_INTERVAL) {
+            update(url)
         }
-        return streamMap.getOrPut(url) { create(url) }
     }
 
     private fun create(
@@ -88,12 +91,16 @@ class RssRepositoryImpl(
         )
     }
 
-    override suspend fun fetch(
+    private suspend fun fetch(
         url: String,
     ): Result<RssFeed> =
         withContext(dispatcher) {
             try {
-                val data = client.get(url).bodyAsBytes()
+                val response = client.get(url)
+                if (!response.status.isSuccess()) {
+                    throw IOException("HTTP error: ${response.status}")
+                }
+                val data = response.bodyAsBytes()
                 val result = RssParser().parse(url, data) ?: throw IllegalStateException("parse failed")
                 Result.success(result)
             } catch (e: CancellationException) {

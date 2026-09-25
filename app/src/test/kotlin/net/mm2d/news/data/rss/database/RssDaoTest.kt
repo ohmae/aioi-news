@@ -40,6 +40,39 @@ class RssDaoTest {
     }
 
     @Test
+    fun `日付不明の記事は末尾に並び再取得で消えた記事が削除されること`() =
+        runTest {
+            val feedUrl = "https://example.com/rss"
+            val feed = RssFeedEntity(url = feedUrl, title = "テスト")
+            fun item(
+                id: String,
+                created: Long,
+            ) = RssItemEntity(
+                id = id,
+                feed = feedUrl,
+                created = created,
+                updated = created,
+                title = id,
+                description = "",
+                content = "",
+                link = "",
+                category = "",
+                imageUrl = "",
+                visited = false,
+            )
+            dao.update(feed, listOf(item("old", 500L), item("undated", 0L)))
+            dao.update(feed, listOf(item("dated", 1000L), item("undated", 0L)))
+            assertThat(dao.getItems(feedUrl).first().map { it.id }).containsExactly("dated", "undated").inOrder()
+            dao.visit(feedUrl, "undated", true)
+
+            dao.update(feed, listOf(item("dated", 1000L), item("undated", 0L)))
+            assertThat(dao.getItems(feedUrl).first().single { it.id == "undated" }.visited).isTrue()
+
+            dao.update(feed, listOf(item("dated", 1000L)))
+            assertThat(dao.getItems(feedUrl).first().map { it.id }).containsExactly("dated")
+        }
+
+    @Test
     fun `itemsが空の場合でもクラッシュせず正常にupdateできること`() =
         runTest {
             val feed = RssFeedEntity(url = "https://example.com/rss", title = "テスト")

@@ -10,8 +10,6 @@ package net.mm2d.news.data.rss.parser
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssItem
 import org.xml.sax.Attributes
-import java.time.OffsetDateTime
-import java.time.format.DateTimeParseException
 
 class AtomHandler(
     url: String,
@@ -27,10 +25,17 @@ class AtomHandler(
         if (builder.title.isEmpty()) return null
         val items = itemBuilders.mapNotNull { item ->
             if (item.title.isEmpty()) return@mapNotNull null
-            val created = if (item.created != 0L) item.created else item.updated
-            if (created == 0L) return@mapNotNull null
+            val created = when {
+                item.created != 0L -> item.created
+                item.updated != 0L -> item.updated
+                else -> 0L
+            }
             val id = item.id.ifEmpty {
-                item.created.toString() + ":" + item.link
+                if (item.created != 0L || item.updated != 0L) {
+                    item.created.toString() + ":" + item.link
+                } else {
+                    item.idWithoutDate()
+                }
             }
             RssItem(
                 id = id,
@@ -194,12 +199,7 @@ class AtomHandler(
 
     private fun parseDate(
         text: String,
-    ): Long =
-        try {
-            OffsetDateTime.parse(text).toInstant().toEpochMilli()
-        } catch (e: DateTimeParseException) {
-            0L
-        }
+    ): Long = DateParser.parseIso8601(text)
 
     companion object {
         private const val NS_ATOM_03 = "http://purl.org/atom/ns#"

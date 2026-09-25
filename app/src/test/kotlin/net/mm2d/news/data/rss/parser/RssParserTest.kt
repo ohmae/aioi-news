@@ -13,6 +13,58 @@ import org.junit.Test
 @Suppress("NonAsciiCharacters", "RemoveRedundantBackticks")
 class RssParserTest {
     @Test
+    fun `RSS2で日付がない記事のIDが安定して重複しないこと`() {
+        val xml = """
+            <rss version="2.0"><channel><title>フィード</title>
+                <item><title>記事1</title><guid>article-1</guid></item>
+                <item><title>記事2</title><description>説明2</description></item>
+                <item><title>記事3</title><description>説明3</description></item>
+            </channel></rss>
+        """.trimIndent()
+        val parser = RssParser()
+        val first = parser.parse("https://example.com/rss", xml.toByteArray())!!
+        val second = parser.parse("https://example.com/rss", xml.toByteArray())!!
+
+        assertThat(first.items.map { it.created }).containsExactly(0L, 0L, 0L)
+        assertThat(first.items.map { it.id }.toSet()).hasSize(3)
+        assertThat(first.items.map { it.id }).containsExactlyElementsIn(second.items.map { it.id }).inOrder()
+    }
+
+    @Test
+    fun `RSS1で日付がない記事にrdf aboutを使うこと`() {
+        val xml = """
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                     xmlns="http://purl.org/rss/1.0/">
+                <channel rdf:about="https://example.com/rss">
+                    <title>フィード</title>
+                    <items><rdf:Seq><rdf:li rdf:resource="https://example.com/1" /></rdf:Seq></items>
+                </channel>
+                <item rdf:about="https://example.com/1"><title>記事1</title></item>
+            </rdf:RDF>
+        """.trimIndent()
+
+        val item = RssParser().parse("https://example.com/rss", xml.toByteArray())!!.items.single()
+
+        assertThat(item.created).isEqualTo(0L)
+        assertThat(item.id).isEqualTo("id:https://example.com/1")
+    }
+
+    @Test
+    fun `Atomで日付がない記事のIDがリンクから作られること`() {
+        val xml = """
+            <feed xmlns="http://www.w3.org/2005/Atom">
+                <title>フィード</title>
+                <entry><title>記事1</title><link href="https://example.com/1" /></entry>
+            </feed>
+        """.trimIndent()
+
+        val item = RssParser().parse("https://example.com/rss", xml.toByteArray())!!.items.single()
+
+        assertThat(item.created).isEqualTo(0L)
+        assertThat(item.id).isEqualTo("link:https://example.com/1")
+    }
+
+    @Test
     fun `RSS2で実体参照を含むタイトルや説明文が欠落せずパースされること`() {
         val xml = """
             <?xml version="1.0" encoding="utf-8"?>

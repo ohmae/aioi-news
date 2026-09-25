@@ -14,12 +14,12 @@ interface RssRepository {
         url: String,
     ): StateFlow<RssFeed>
 
+    suspend fun updateIfNeed(
+        url: String,
+    )
+
     suspend fun visit(
         url: String,
         id: String,
     )
-
-    suspend fun fetch(
-        url: String,
-    ): Result<RssFeed>
 }

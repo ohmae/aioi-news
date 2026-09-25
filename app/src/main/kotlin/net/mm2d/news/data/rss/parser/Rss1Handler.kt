@@ -10,8 +10,6 @@ package net.mm2d.news.data.rss.parser
 import net.mm2d.news.core.RssFeed
 import net.mm2d.news.core.RssItem
 import org.xml.sax.Attributes
-import java.time.OffsetDateTime
-import java.time.format.DateTimeParseException
 
 class Rss1Handler(
     url: String,
@@ -27,9 +25,13 @@ class Rss1Handler(
         if (builder.title.isEmpty()) return null
         val items = itemBuilders.values.mapNotNull { item ->
             if (item.title.isEmpty()) return@mapNotNull null
-            if (item.created == 0L) return@mapNotNull null
+            val id = if (item.created != 0L) {
+                item.created.toString() + ":" + item.link
+            } else {
+                item.idWithoutDate()
+            }
             RssItem(
-                id = item.created.toString() + ":" + item.link,
+                id = id,
                 created = item.created,
                 updated = item.created,
                 title = item.title,
@@ -68,6 +70,7 @@ class Rss1Handler(
             val resource = attributes.getValue(NS_RDF, "resource")
             if (resource.isNullOrEmpty()) return
             itemBuilders[resource] = RssItemBuilder().also {
+                it.id = resource
                 it.link = resource
             }
             return
@@ -147,12 +150,7 @@ class Rss1Handler(
 
     private fun parseDate(
         text: String,
-    ): Long =
-        try {
-            OffsetDateTime.parse(text).toInstant().toEpochMilli()
-        } catch (e: DateTimeParseException) {
-            0L
-        }
+    ): Long = DateParser.parseIso8601(text)
 
     companion object {
         private const val NS_RSS = "http://purl.org/rss/1.0/"
