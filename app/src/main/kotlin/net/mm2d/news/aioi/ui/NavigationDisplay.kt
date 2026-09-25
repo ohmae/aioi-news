@@ -9,23 +9,18 @@ package net.mm2d.news.aioi.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.VisibleForTesting
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.SizeTransform
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.scene.SceneDecoratorStrategy
 import androidx.navigation3.scene.SceneInfo
 import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
@@ -36,35 +31,22 @@ import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.NavigationEventState
 import androidx.navigationevent.compose.rememberNavigationEventState
 import net.mm2d.news.aioi.ui.theme.NavigationSpec
-import net.mm2d.news.aioi.ui.theme.PredictiveTransitionSpec
-import net.mm2d.news.aioi.ui.theme.TransitionSpec
 
 @Composable
 fun <T : NavKey> NavigationDisplay(
     navigator: Navigator<T>,
     modifier: Modifier = Modifier,
-    contentAlignment: Alignment = Alignment.TopStart,
-    entryDecorators: List<NavEntryDecorator<T>> = listOf(
-        rememberSaveableStateHolderNavEntryDecorator(),
-        rememberViewModelStoreNavEntryDecorator(),
-    ),
     sceneStrategies: List<SceneStrategy<T>> = listOf(SinglePaneSceneStrategy()),
-    sceneDecoratorStrategies: List<SceneDecoratorStrategy<T>> = emptyList(),
-    sharedTransitionScope: SharedTransitionScope? = null,
-    sizeTransform: SizeTransform? = null,
-    transitionSpec: TransitionSpec<T> = NavigationSpec.push(),
-    popTransitionSpec: TransitionSpec<T> = NavigationSpec.pop(),
-    predictivePopTransitionSpec: PredictiveTransitionSpec<T> = NavigationSpec.predictivePop(),
     entryProvider: (key: T) -> NavEntry<T>,
 ) {
     // 画面ごとの保存可能な状態とViewModel、Navigatorのライフサイクル監視をEntryに紐付ける。
-    val navigatorDecorator = rememberNavigatorNavEntryDecorator(navigator)
-    val allDecorators = remember(entryDecorators, navigatorDecorator) {
-        entryDecorators + navigatorDecorator
-    }
     val entries = rememberDecoratedNavEntries(
         backStack = navigator.backStack,
-        entryDecorators = allDecorators,
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator(),
+            rememberNavigatorNavEntryDecorator(navigator),
+        ),
         entryProvider = entryProvider,
     )
     // Transition中の画面遷移は無効化するが、
@@ -73,8 +55,6 @@ fun <T : NavKey> NavigationDisplay(
     val sceneState = rememberSceneState(
         entries = entries,
         sceneStrategies = sceneStrategies,
-        sceneDecoratorStrategies = sceneDecoratorStrategies,
-        sharedTransitionScope = sharedTransitionScope,
         onBack = {
             navigator.onSystemBack(hasPredictiveBackStarted)
         },
@@ -123,11 +103,9 @@ fun <T : NavKey> NavigationDisplay(
         sceneState = sceneState,
         navigationEventState = navigationEventState,
         modifier = modifier,
-        contentAlignment = contentAlignment,
-        sizeTransform = sizeTransform,
-        transitionSpec = transitionSpec,
-        popTransitionSpec = popTransitionSpec,
-        predictivePopTransitionSpec = predictivePopTransitionSpec,
+        transitionSpec = NavigationSpec.push(),
+        popTransitionSpec = NavigationSpec.pop(),
+        predictivePopTransitionSpec = NavigationSpec.predictivePop(),
     )
 }
 
