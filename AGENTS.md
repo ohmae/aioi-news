@@ -64,7 +64,7 @@
 - `app/src/main/kotlin/net/mm2d/news/aioi/App.kt`: Applicationクラス
 - `app/src/debug/`: Debug用Manifestと `DebugApp.kt`
 - `app/src/main/assets/`: リンク集の `links.json` とライセンスの `license.html`
-- `app/schemas/`: Roomのエクスポート済みスキーマ（現在のDBバージョンは1）
+- `app/schemas/`: Roomのエクスポート済みスキーマ
 - `app/src/test/kotlin/net/mm2d/news/aioi/ui/`: `NavigatorTest.kt` と `NavigationDisplayTest.kt`
   。Robolectricを使用するローカルテスト。
 - `baseline-profile/src/main/kotlin/`: `BaselineProfileGenerator.kt` と `StartupBenchmarks.kt`
