@@ -1,0 +1,104 @@
+/*
+ * Copyright (c) 2026 大前良介 (OHMAE Ryosuke)
+ *
+ * This software is released under the MIT License.
+ * http://opensource.org/licenses/MIT
+ */
+
+package net.mm2d.news.data.rss.parser
+
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
+
+@Suppress("NonAsciiCharacters")
+class RssParserTest {
+    @Test
+    fun `RSS2で実体参照を含むタイトルや説明文が欠落せずパースされること`() {
+        val xml = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <rss version="2.0">
+                <channel>
+                    <title>相生市 &amp; 播磨</title>
+                    <link>https://example.com</link>
+                    <description>相生市の新着情報 &lt;最新&gt;</description>
+                    <item>
+                        <title>相生市 &amp; 新着情報</title>
+                        <link>https://example.com/1</link>
+                        <description>本文です &amp; 詳細情報</description>
+                        <pubDate>Mon, 06 Sep 2021 16:45:00 +0900</pubDate>
+                    </item>
+                </channel>
+            </rss>
+        """.trimIndent()
+
+        val parser = RssParser()
+        val feed = parser.parse("https://example.com/rss", xml.toByteArray())
+
+        assertThat(feed).isNotNull()
+        assertThat(feed!!.title).isEqualTo("相生市 & 播磨")
+        assertThat(feed.description).isEqualTo("相生市の新着情報 <最新>")
+        assertThat(feed.items).hasSize(1)
+        assertThat(feed.items[0].title).isEqualTo("相生市 & 新着情報")
+        assertThat(feed.items[0].description).isEqualTo("本文です & 詳細情報")
+    }
+
+    @Test
+    fun `RSS1で実体参照を含むタイトルが欠落せずパースされること`() {
+        val xml = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                     xmlns="http://purl.org/rss/1.0/"
+                     xmlns:dc="http://purl.org/dc/elements/1.1/">
+                <channel rdf:about="https://example.com/rss">
+                    <title>チャンネル &amp; タイトル</title>
+                    <link>https://example.com</link>
+                    <description>説明</description>
+                    <items>
+                        <rdf:Seq>
+                            <rdf:li rdf:resource="https://example.com/1" />
+                        </rdf:Seq>
+                    </items>
+                </channel>
+                <item rdf:about="https://example.com/1">
+                    <title>記事 &amp; タイトル</title>
+                    <link>https://example.com/1</link>
+                    <description>記事説明</description>
+                    <dc:date>2021-09-06T16:45:00+09:00</dc:date>
+                </item>
+            </rdf:RDF>
+        """.trimIndent()
+
+        val parser = RssParser()
+        val feed = parser.parse("https://example.com/rss", xml.toByteArray())
+
+        assertThat(feed).isNotNull()
+        assertThat(feed!!.title).isEqualTo("チャンネル & タイトル")
+        assertThat(feed.items).hasSize(1)
+        assertThat(feed.items[0].title).isEqualTo("記事 & タイトル")
+    }
+
+    @Test
+    fun `Atomで実体参照を含むタイトルが欠落せずパースされること`() {
+        val xml = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <feed xmlns="http://www.w3.org/2005/Atom">
+                <title>フィード &amp; タイトル</title>
+                <link href="https://example.com" />
+                <entry>
+                    <id>tag:example.com,2021:1</id>
+                    <title>記事 &amp; タイトル</title>
+                    <link href="https://example.com/1" />
+                    <updated>2021-09-06T16:45:00+09:00</updated>
+                </entry>
+            </feed>
+        """.trimIndent()
+
+        val parser = RssParser()
+        val feed = parser.parse("https://example.com/rss", xml.toByteArray())
+
+        assertThat(feed).isNotNull()
+        assertThat(feed!!.title).isEqualTo("フィード & タイトル")
+        assertThat(feed.items).hasSize(1)
+        assertThat(feed.items[0].title).isEqualTo("記事 & タイトル")
+    }
+}

@@ -77,9 +77,8 @@ class RssRepositoryImpl(
     ) {
         fetch(url).fold(
             onSuccess = { feed ->
-                val currentItems = streamMap[url]?.value?.items ?: emptyList()
                 val feedEntity = feed.toRssFeedEntity()
-                val itemEntities = feed.toRssItemEntities(currentItems)
+                val itemEntities = feed.toRssItemEntities()
                 dao.update(feedEntity, itemEntities)
             },
             onFailure = { e ->

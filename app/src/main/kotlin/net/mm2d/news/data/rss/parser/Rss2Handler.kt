@@ -22,6 +22,8 @@ class Rss2Handler(
     private val itemBuilders: MutableList<RssItemBuilder> = mutableListOf()
     private var workItem: RssItemBuilder? = null
 
+    private val textBuilder: StringBuilder = StringBuilder()
+
     override fun getFeed(): RssFeed? {
         if (builder.title.isEmpty()) return null
         val items = itemBuilders.mapNotNull { item ->
@@ -57,6 +59,7 @@ class Rss2Handler(
         qName: String,
         attributes: Attributes,
     ) {
+        textBuilder.setLength(0)
         path.push(uri, localName)
         if (path.getOrNull(1).matches("", "channel") &&
             path.getOrNull(0).matches("", "item")
@@ -70,6 +73,7 @@ class Rss2Handler(
         localName: String,
         qName: String,
     ) {
+        handleTextContent()
         val tag = path.pop()
         if (path.getOrNull(0).matches("", "channel") &&
             tag.matches("", "item")
@@ -81,59 +85,90 @@ class Rss2Handler(
         }
     }
 
-    override fun characters(
-        ch: CharArray,
-        start: Int,
-        length: Int,
-    ) {
-        val tag = path.getOrNull(0) ?: return
-        val text = String(ch, start, length).trim()
-        if (text.isEmpty()) return
+    private fun handleTextContent() {
+        val tag = path.getOrNull(0)
+        val text = textBuilder.toString().trim()
+        textBuilder.setLength(0)
+        if (tag == null || text.isEmpty()) return
+        handleText(tag, text)
+    }
 
+    private fun handleText(
+        tag: XmlTag,
+        text: String,
+    ) {
         if (path.getOrNull(1).matches("", "channel")) {
-            when {
-                tag.matches("", "title") -> builder.title = text
-                tag.matches("", "description") -> builder.description = text
-                tag.matches("", "link") -> builder.link = text
-            }
+            handleChannelText(tag, text)
             return
         }
         if (path.getOrNull(2).matches("", "channel") &&
             path.getOrNull(1).matches("", "image")
         ) {
-            when {
-                tag.matches("", "url") -> builder.imageUrl = text
-
-                tag.matches("", "title") -> {
-                    if (builder.title.isEmpty()) {
-                        builder.title = text
-                    }
-                }
-
-                tag.matches("", "link") -> {
-                    if (builder.link.isEmpty()) {
-                        builder.link = text
-                    }
-                }
-            }
+            handleImageText(tag, text)
             return
         }
-
         if (path.getOrNull(2).matches("", "channel") &&
             path.getOrNull(1).matches("", "item")
         ) {
-            val workItem = workItem ?: return
-            when {
-                tag.matches("", "title") -> workItem.title = text
-                tag.matches("", "description") -> workItem.description = text
-                tag.matches("", "link") -> workItem.link = text
-                tag.matches("", "pubDate") -> workItem.created = parseDate(text)
-                tag.matches("", "category") -> workItem.category = text
-                tag.matches("", "image") -> workItem.imageUrl = text
-                tag.matches("", "enclosure") -> workItem.imageUrl = text
-                tag.matches(NS_CONTENT, "encoded") -> workItem.content.append(text)
+            handleItemText(tag, text)
+        }
+    }
+
+    private fun handleChannelText(
+        tag: XmlTag,
+        text: String,
+    ) {
+        when {
+            tag.matches("", "title") -> builder.title = text
+            tag.matches("", "description") -> builder.description = text
+            tag.matches("", "link") -> builder.link = text
+        }
+    }
+
+    private fun handleImageText(
+        tag: XmlTag,
+        text: String,
+    ) {
+        when {
+            tag.matches("", "url") -> builder.imageUrl = text
+
+            tag.matches("", "title") -> {
+                if (builder.title.isEmpty()) {
+                    builder.title = text
+                }
+            }
+
+            tag.matches("", "link") -> {
+                if (builder.link.isEmpty()) {
+                    builder.link = text
+                }
             }
         }
+    }
+
+    private fun handleItemText(
+        tag: XmlTag,
+        text: String,
+    ) {
+        val workItem = workItem ?: return
+        when {
+            tag.matches("", "title") -> workItem.title = text
+            tag.matches("", "description") -> workItem.description = text
+            tag.matches("", "link") -> workItem.link = text
+            tag.matches("", "pubDate") -> workItem.created = parseDate(text)
+            tag.matches("", "category") -> workItem.category = text
+            tag.matches("", "image") -> workItem.imageUrl = text
+            tag.matches("", "enclosure") -> workItem.imageUrl = text
+            tag.matches(NS_CONTENT, "encoded") -> workItem.content.append(text)
+        }
+    }
+
+    override fun characters(
+        ch: CharArray,
+        start: Int,
+        length: Int,
+    ) {
+        textBuilder.appendRange(ch, start, start + length)
     }
 
     private fun parseDate(

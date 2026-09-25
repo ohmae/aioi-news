@@ -21,6 +21,8 @@ class Rss1Handler(
     private val itemBuilders: MutableMap<String, RssItemBuilder> = LinkedHashMap()
     private var workItem: RssItemBuilder? = null
 
+    private val textBuilder: StringBuilder = StringBuilder()
+
     override fun getFeed(): RssFeed? {
         if (builder.title.isEmpty()) return null
         val items = itemBuilders.values.mapNotNull { item ->
@@ -56,6 +58,7 @@ class Rss1Handler(
         qName: String,
         attributes: Attributes,
     ) {
+        textBuilder.setLength(0)
         path.push(uri, localName)
         if (path.getOrNull(3).matches(NS_RSS, "channel") &&
             path.getOrNull(2).matches(NS_RSS, "items") &&
@@ -80,9 +83,57 @@ class Rss1Handler(
         localName: String,
         qName: String,
     ) {
+        handleTextContent()
         path.pop()
         if (localName == "item") {
             workItem = null
+        }
+    }
+
+    private fun handleTextContent() {
+        val tag = path.getOrNull(0)
+        val text = textBuilder.toString().trim()
+        textBuilder.setLength(0)
+        if (tag == null || text.isEmpty()) return
+        handleText(tag, text)
+    }
+
+    private fun handleText(
+        tag: XmlTag,
+        text: String,
+    ) {
+        if (path.getOrNull(1).matches(NS_RSS, "channel")) {
+            handleChannelText(tag, text)
+            return
+        }
+        if (path.getOrNull(1).matches(NS_RSS, "item")) {
+            handleItemText(tag, text)
+        }
+    }
+
+    private fun handleChannelText(
+        tag: XmlTag,
+        text: String,
+    ) {
+        when {
+            tag.matches(NS_RSS, "title") -> builder.title = text
+            tag.matches(NS_RSS, "description") -> builder.description = text
+            tag.matches(NS_RSS, "link") -> builder.link = text
+        }
+    }
+
+    private fun handleItemText(
+        tag: XmlTag,
+        text: String,
+    ) {
+        val workItem = workItem ?: return
+        when {
+            tag.matches(NS_RSS, "title") -> workItem.title = text
+            tag.matches(NS_RSS, "description") -> workItem.description = text
+            tag.matches(NS_RSS, "link") -> workItem.link = text
+            tag.matches(NS_DC, "subject") -> workItem.category = text
+            tag.matches(NS_DC, "date") -> workItem.created = parseDate(text)
+            tag.matches(NS_CONTENT, "encoded") -> workItem.content.append(text)
         }
     }
 
@@ -91,29 +142,7 @@ class Rss1Handler(
         start: Int,
         length: Int,
     ) {
-        val tag = path.getOrNull(0) ?: return
-        val text = String(ch, start, length).trim()
-        if (text.isEmpty()) return
-
-        if (path.getOrNull(1).matches(NS_RSS, "channel")) {
-            when {
-                tag.matches(NS_RSS, "title") -> builder.title = text
-                tag.matches(NS_RSS, "description") -> builder.description = text
-                tag.matches(NS_RSS, "link") -> builder.link = text
-            }
-            return
-        }
-        if (path.getOrNull(1).matches(NS_RSS, "item")) {
-            val workItem = workItem ?: return
-            when {
-                tag.matches(NS_RSS, "title") -> workItem.title = text
-                tag.matches(NS_RSS, "description") -> workItem.description = text
-                tag.matches(NS_RSS, "link") -> workItem.link = text
-                tag.matches(NS_DC, "subject") -> workItem.category = text
-                tag.matches(NS_DC, "date") -> workItem.created = parseDate(text)
-                tag.matches(NS_CONTENT, "encoded") -> workItem.content.append(text)
-            }
-        }
+        textBuilder.appendRange(ch, start, start + length)
     }
 
     private fun parseDate(

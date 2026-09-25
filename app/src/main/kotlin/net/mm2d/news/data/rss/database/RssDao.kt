@@ -59,14 +59,30 @@ interface RssDao {
         feed: String,
     ): Flow<List<RssItemEntity>>
 
+    @Query("SELECT id FROM items WHERE feed = :feed AND visited = 1")
+    suspend fun getVisitedItemIds(
+        feed: String,
+    ): List<String>
+
     @Transaction
     suspend fun update(
         feed: RssFeedEntity,
         items: List<RssItemEntity>,
     ) {
-        val oldest = items.minOf { it.created }
-        deleteItems(feed.url, oldest)
+        val visitedIds = getVisitedItemIds(feed.url).toSet()
+        val mergedItems =
+            if (visitedIds.isEmpty()) {
+                items
+            } else {
+                items.map { item ->
+                    if (visitedIds.contains(item.id)) item.copy(visited = true) else item
+                }
+            }
+        val oldest = mergedItems.minOfOrNull { it.created }
+        if (oldest != null) {
+            deleteItems(feed.url, oldest)
+        }
         insert(feed)
-        insert(items)
+        insert(mergedItems)
     }
 }
