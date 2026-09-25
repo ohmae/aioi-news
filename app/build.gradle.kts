@@ -18,7 +18,7 @@ plugins {
 val applicationName = "AIOI-News"
 val versionMajor = 0
 val versionMinor = 2
-val versionPatch = 0
+val versionPatch = 1
 
 android {
     namespace = "net.mm2d.news.aioi"
