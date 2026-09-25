@@ -25,10 +25,12 @@ class Rss2Handler(
         if (builder.title.isEmpty()) return null
         val items = itemBuilders.mapNotNull { item ->
             if (item.title.isEmpty()) return@mapNotNull null
-            val id = if (item.created != 0L) {
-                item.created.toString() + ":" + item.link
-            } else {
-                item.idWithoutDate()
+            val id = item.id.ifEmpty {
+                if (item.created != 0L) {
+                    item.created.toString() + ":" + item.link
+                } else {
+                    item.idWithoutDate()
+                }
             }
             RssItem(
                 id = id,
@@ -174,7 +176,6 @@ class Rss2Handler(
             tag.matches("", "pubDate") -> workItem.created = parseDate(text)
             tag.matches("", "category") -> workItem.category = text
             tag.matches("", "image") -> workItem.imageUrl = text
-            tag.matches("", "enclosure") -> workItem.imageUrl = text
             tag.matches(NS_CONTENT, "encoded") -> workItem.content.append(text)
         }
     }

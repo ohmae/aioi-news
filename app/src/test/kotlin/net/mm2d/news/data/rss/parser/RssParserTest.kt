@@ -233,4 +233,36 @@ class RssParserTest {
             assertThat(feed.title).doesNotContain("root:")
         }
     }
+
+    @Test
+    fun `RSS2でguidが存在する場合は記事IDとして採用されること`() {
+        val xml = """
+            <?xml version="1.0" encoding="utf-8"?>
+            <rss version="2.0">
+                <channel>
+                    <title>タイトル</title>
+                    <link>https://example.com</link>
+                    <item>
+                        <title>記事1</title>
+                        <link>https://example.com/1</link>
+                        <guid>custom-guid-12345</guid>
+                        <pubDate>Mon, 06 Sep 2021 16:45:00 +0900</pubDate>
+                    </item>
+                    <item>
+                        <title>記事2</title>
+                        <link>https://example.com/2</link>
+                        <pubDate>Mon, 06 Sep 2021 16:45:00 +0900</pubDate>
+                    </item>
+                </channel>
+            </rss>
+        """.trimIndent()
+
+        val parser = RssParser()
+        val feed = parser.parse("https://example.com/rss", xml.toByteArray())
+
+        assertThat(feed).isNotNull()
+        assertThat(feed!!.items).hasSize(2)
+        assertThat(feed.items[0].id).isEqualTo("custom-guid-12345")
+        assertThat(feed.items[1].id).isEqualTo("${feed.items[1].created}:https://example.com/2")
+    }
 }
