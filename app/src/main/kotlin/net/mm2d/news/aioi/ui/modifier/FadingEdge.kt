@@ -27,7 +27,9 @@ fun Modifier.drawVerticalFadingEdges(
     Modifier
         .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
         .drawWithCache {
-            val edgeLengthPx = edgeLength.toPx().coerceAtMost(size.height / 2f)
+            val edgeLengthPx = edgeLength.toPx()
+            val edgeSize = Size(size.width, edgeLengthPx)
+            val forwardTopLeft = Offset(0f, size.height - edgeLengthPx)
             val backwardBrush = Brush.verticalGradient(
                 colors = listOf(Color(0x40000000), Color.Black),
                 startY = 0f,
@@ -43,15 +45,15 @@ fun Modifier.drawVerticalFadingEdges(
                 if (scrollableState.canScrollBackward) {
                     drawRect(
                         brush = backwardBrush,
-                        size = Size(size.width, edgeLengthPx),
+                        size = edgeSize,
                         blendMode = BlendMode.DstIn,
                     )
                 }
                 if (scrollableState.canScrollForward) {
                     drawRect(
                         brush = forwardBrush,
-                        topLeft = Offset(0f, size.height - edgeLengthPx),
-                        size = Size(size.width, edgeLengthPx),
+                        topLeft = forwardTopLeft,
+                        size = edgeSize,
                         blendMode = BlendMode.DstIn,
                     )
                 }
