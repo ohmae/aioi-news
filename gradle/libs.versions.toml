@@ -10,7 +10,6 @@ versionCatalogUpdate = "1.1.1"
 
 kotlinxCoroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
-kotlinxDatetime = "0.8.0"
 
 androidxCore = "1.19.1"
 androidxLifecycle = "2.11.0"
@@ -33,8 +32,6 @@ androidxJunit = "1.3.0"
 
 ktlint = "1.8.0"
 
-espressoCore = "3.7.0"
-uiAutomator = "2.4.0"
 benchmarkMacroJunit4 = "1.5.0"
 baselineProfile = "1.5.0"
 profileInstaller = "1.4.1"
@@ -55,7 +52,6 @@ kotlinxCoroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-corou
 kotlinxCoroutinesAndroid = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinxSerializationCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinxSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
-kotlinxDatetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 androidxCore = { group = "androidx.core", name = "core", version.ref = "androidxCore" }
 androidxLifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "androidxLifecycle" }
@@ -66,7 +62,7 @@ androidxRoom = { group = "androidx.room", name = "room-runtime", version.ref = "
 androidxRoomCompiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
 
 androidxActivityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
-androidxHiltCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltCompose" }
+androidxHiltCompose = { group = "androidx.hilt", name = "hilt-lifecycle-viewmodel-compose", version.ref = "androidxHiltCompose" }
 androidxLifecycleViewModelNavigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "androidxLifecycle" }
 androidxNavigation3Runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "androidxNavigation3" }
 androidxNavigation3Ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "androidxNavigation3" }
@@ -74,7 +70,6 @@ androidxComposeBom = { group = "androidx.compose", name = "compose-bom", version
 androidxComposeUi = { group = "androidx.compose.ui", name = "ui" }
 androidxComposeUiTestJunit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidxComposeUiGraphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidxComposeUiToolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidxComposeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
 androidxComposeMaterialIconsCore = { group = "androidx.compose.material", name = "material-icons-core" }
 
@@ -91,8 +86,6 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 androidxJunit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxJunit" }
 kotlinxCoroutinesTest = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 
-espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-uiAutomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiAutomator" }
 benchmarkMacroJunit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 profileInstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileInstaller" }
 testRule = { group = "androidx.test", name = "rules", version.ref = "testRule" }

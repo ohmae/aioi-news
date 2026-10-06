@@ -52,8 +52,6 @@ dependencies {
     coreLibraryDesugaring(libs.desugarJdkLibs)
 
     implementation(libs.androidxJunit)
-    implementation(libs.espressoCore)
-    implementation(libs.uiAutomator)
     implementation(libs.benchmarkMacroJunit4)
     implementation(libs.testRule)
 }

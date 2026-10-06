@@ -77,7 +77,6 @@ dependencies {
     implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.kotlinxSerializationCore)
     implementation(libs.kotlinxSerializationJson)
-    implementation(libs.kotlinxDatetime)
     implementation(libs.hiltAndroid)
     ksp(libs.hiltAndroidCompiler)
 
@@ -97,7 +96,6 @@ dependencies {
     implementation(platform(libs.androidxComposeBom))
     implementation(libs.androidxComposeUi)
     implementation(libs.androidxComposeUiGraphics)
-    implementation(libs.androidxComposeUiToolingPreview)
     implementation(libs.androidxComposeMaterial3)
     implementation(libs.androidxComposeMaterialIconsCore)
 
