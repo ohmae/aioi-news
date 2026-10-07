@@ -9,6 +9,7 @@ package net.mm2d.news.aioi.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceRequest
@@ -144,6 +145,7 @@ private class LicenseWebViewClient(
 ) : WebViewClient() {
     var isPageFinished: Boolean = false
         private set
+    private var isRenderProcessGone: Boolean = false
 
     override fun shouldOverrideUrlLoading(
         view: WebView,
@@ -157,6 +159,7 @@ private class LicenseWebViewClient(
         view: WebView,
         url: String,
     ) {
+        if (isRenderProcessGone) return
         isPageFinished = true
         setTheme(view, getBottomPadding())
     }
@@ -165,7 +168,11 @@ private class LicenseWebViewClient(
         view: WebView,
         detail: RenderProcessGoneDetail,
     ): Boolean {
-        view.destroy()
+        if (isRenderProcessGone) return true
+        isRenderProcessGone = true
+        isPageFinished = false
+        // 終了したWebViewを直ちに取り外し、破棄はAndroidViewのonReleaseに任せる。
+        (view.parent as? ViewGroup)?.removeView(view)
         onRenderProcessGone()
         return true
     }
