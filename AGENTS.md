@@ -10,10 +10,13 @@
 - **リポジトリ構成**: 単一の `app` アプリケーションモジュールおよび `baseline-profile` モジュールから構成。
 
 ## 2. エージェント運用原則 (Agent Principles)
-1. **指示の厳格な遵守**: ユーザーからの明示的な指示や設計条件（フィルタリングルール、レイアウト境界等）は正確に反映すること。
-2. **ログとスタック・トレースの確認**: ランタイムエラーやビルドエラー発生時は推測に頼らず、必ずログを取得・確認して根本原因を特定すること。
-3. **既存スタイルの維持**: `ktlint` のルールに厳格に従い、リポジトリ全体のコードスタイルの一貫性を維持すること。既存のドキュメントコメントを不必要に削除・改変しないこと。
-4. **検証の実施**: コード変更後は `./gradlew ktlint` と `./gradlew :app:assembleDebug` を実行し、変更に関係するテストも確認すること。ktlintタスクは
+
+- ユーザーへの説明・確認・完了報告、出力ドキュメント、著作権表示を除くコードコメントは指定がなければ日本語としてください。
+- Markdownを出力する際は、表などの構造上改行できないもの、URLなど改行すると意味が変わってしまうものを覗いて、プレーンテキストでの可読性を考え、半角120文字程度までに収まるように改行をいれること。
+- **指示の厳格な遵守**: ユーザーからの明示的な指示や設計条件（フィルタリングルール、レイアウト境界等）は正確に反映すること。
+- **ログとスタック・トレースの確認**: ランタイムエラーやビルドエラー発生時は推測に頼らず、必ずログを取得・確認して根本原因を特定すること。
+- **既存スタイルの維持**: `ktlint` のルールに厳格に従い、リポジトリ全体のコードスタイルの一貫性を維持すること。既存のドキュメントコメントを不必要に削除・改変しないこと。
+- **検証の実施**: コード変更後は `./gradlew ktlint` と `./gradlew :app:assembleDebug` を実行し、変更に関係するテストも確認すること。ktlintタスクは
    `isIgnoreExitValue = true` のため、Gradleの成功表示だけでなく違反の出力も確認すること。ドキュメントのみの変更では記載内容と実ファイルの整合性および差分を確認すること。
 
 ## 3. 技術スタック (Tech Stack)
@@ -26,7 +29,8 @@
 - **DI (依存注入)**: Hilt (`com.google.dagger:hilt-android`) + KSP
 - **Database / キャッシュ**: Room Database (`androidx.room`)
 - **Networking**: Ktor Client (`io.ktor:ktor-client-okhttp`) / OkHttp3
-- **テスト**: JUnit 4 + Robolectric + Compose UI Test / MockK / Truth / Coroutines Test。カバレッジ計測用にKoverを導入。
+- **テスト**: JUnit 4 + Robolectric + AndroidX Test + Compose UI Test / MockK / Truth / Coroutines
+  Test。カバレッジ計測用にKoverを導入。
 - **性能計測**: Baseline Profile + Macrobenchmark / UI Automator
 - **コードスタイル / フォーマッタ**: ktlint
 - **依存関係管理**: Gradle Version Catalog (`gradle/libs.versions.toml`) + Dependency Guard (`dependency-guard-baseline.sh`)
@@ -147,6 +151,12 @@ KBページ）を使用する。`useConnectedDevices = false` のため接続済
 5. **書式と依存関係**:
     - `.editorconfig` に従う（KotlinはIntelliJ IDEAスタイル、4スペース、最大120文字）。
     - 依存ライブラリは `gradle/libs.versions.toml` で管理し、Roomの構造変更時は `app/schemas/` も確認する。
+6. **ユニットテスト (Unit Testing)**:
+    - ユニットテストでAndroidフレームワーク機能を利用する際は、原則として `org.robolectric` の直接利用（
+      `RobolectricTestRunner`, `RuntimeEnvironment` 等）を避け、`androidx.test`（`AndroidJUnit4`, `ApplicationProvider`
+      等）を使用すること。
+    - ただし、マニフェスト未登録の `ComponentActivity` を生成・制御する `Robolectric.buildActivity` のように、
+      `androidx.test` に対応する機能がない場合（代替手段が存在しない場合）に限り、例外として `org.robolectric` の使用を許容する。
 
 ## 7. 情報の確認・フィードバック (Feedback)
 AI Agentが機能追加や改修を行う際、以下の点において曖昧さや不明点がある場合は、作業を開始する前にユーザーへ確認を行ってください。
