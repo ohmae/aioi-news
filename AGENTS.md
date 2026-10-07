@@ -157,6 +157,7 @@ KBページ）を使用する。`useConnectedDevices = false` のため接続済
       等）を使用すること。
     - ただし、マニフェスト未登録の `ComponentActivity` を生成・制御する `Robolectric.buildActivity` のように、
       `androidx.test` に対応する機能がない場合（代替手段が存在しない場合）に限り、例外として `org.robolectric` の使用を許容する。
+   - テストメソッド名は`<テスト対象> <日本語での説明>`とする。
 
 ## 7. 情報の確認・フィードバック (Feedback)
 AI Agentが機能追加や改修を行う際、以下の点において曖昧さや不明点がある場合は、作業を開始する前にユーザーへ確認を行ってください。
