@@ -39,7 +39,6 @@ android {
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_11
-        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 
@@ -54,6 +53,7 @@ dependencies {
     implementation(libs.androidxJunit)
     implementation(libs.benchmarkMacroJunit4)
     implementation(libs.testRule)
+    implementation(libs.uiAutomator)
 }
 
 androidComponents {

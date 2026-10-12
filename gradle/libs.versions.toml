@@ -36,6 +36,7 @@ benchmarkMacroJunit4 = "1.5.0"
 baselineProfile = "1.5.0"
 profileInstaller = "1.4.1"
 testRule = "1.7.0"
+uiAutomator = "2.4.0"
 
 # for release
 
@@ -89,6 +90,7 @@ kotlinxCoroutinesTest = { group = "org.jetbrains.kotlinx", name = "kotlinx-corou
 benchmarkMacroJunit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 profileInstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileInstaller" }
 testRule = { group = "androidx.test", name = "rules", version.ref = "testRule" }
+uiAutomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiAutomator" }
 
 # debug
 okhttpLoggingInterceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }

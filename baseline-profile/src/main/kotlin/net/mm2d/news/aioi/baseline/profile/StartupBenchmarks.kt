@@ -34,9 +34,12 @@ class StartupBenchmarks {
     private fun benchmark(
         compilationMode: CompilationMode,
     ) {
+        val targetAppId = InstrumentationRegistry.getArguments().getString("targetAppId")
+            ?: InstrumentationRegistry.getArguments().getString("targetPackage")
+            ?: "net.mm2d.news.aioi"
+
         rule.measureRepeated(
-            packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
-                ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
+            packageName = targetAppId,
             metrics = listOf(StartupTimingMetric()),
             compilationMode = compilationMode,
             startupMode = StartupMode.COLD,
