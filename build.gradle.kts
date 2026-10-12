@@ -10,10 +10,9 @@ plugins {
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.dependencyGuard) apply false
-    alias(libs.plugins.versionCatalogUpdate)
-
     alias(libs.plugins.androidTest) apply false
     alias(libs.plugins.baselineProfile) apply false
+    alias(libs.plugins.versionCatalogUpdate)
 
     // for release
 }

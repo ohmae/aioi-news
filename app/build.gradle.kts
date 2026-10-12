@@ -8,9 +8,8 @@ plugins {
     alias(libs.plugins.androidxRoom)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kover)
-    alias(libs.plugins.dependencyGuard)
-
     alias(libs.plugins.baselineProfile)
+    alias(libs.plugins.dependencyGuard)
 
     // for release
 }
