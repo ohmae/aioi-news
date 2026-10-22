@@ -47,10 +47,10 @@ private fun mainEntryProvider(
     navigator: Navigator<MainNavKey>,
 ): (MainNavKey) -> NavEntry<MainNavKey> =
     entryProvider {
-        entry<MainNavKey.Main> {
+        entry<MainNavKey.Main> { navKey ->
             MainScreen(
                 navigateToLicense = {
-                    navigator.navigate(MainNavKey.License)
+                    navigator.navigate(from = navKey, to = MainNavKey.License)
                 },
             )
         }
