@@ -9,7 +9,7 @@ dependencyGuard = "0.5.0"
 versionCatalogUpdate = "1.1.1"
 
 kotlinxCoroutines = "1.11.0"
-kotlinxSerialization = "1.11.0"
+kotlinxSerialization = "1.12.0"
 
 androidxCore = "1.19.1"
 androidxLifecycle = "2.11.0"
@@ -21,7 +21,7 @@ androidxNavigation3 = "1.2.0"
 androidxHiltCompose = "1.4.0"
 material = "1.14.0"
 ktor = "3.6.0"
-okhttp = "5.5.0"
+okhttp = "5.5.1"
 
 # test
 junit = "4.13.2"
