@@ -37,7 +37,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -66,6 +69,8 @@ fun WhatsNewPage(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
+            .testTag("whats_new_list")
+            .semantics { testTagsAsResourceId = true }
             .drawVerticalFadingEdges(listState),
         contentPadding = PaddingValues(vertical = 6.dp),
         state = listState,

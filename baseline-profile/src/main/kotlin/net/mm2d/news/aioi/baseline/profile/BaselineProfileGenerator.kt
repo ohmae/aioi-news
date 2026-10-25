@@ -13,6 +13,8 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.StaleObjectException
+import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
@@ -25,7 +27,8 @@ class BaselineProfileGenerator {
     val rule = BaselineProfileRule()
 
     @Test
-    fun generate() {
+    @JvmName("generate")
+    fun `generate プロファイルを生成する`() {
         val targetAppId = InstrumentationRegistry.getArguments().getString("targetAppId")
             ?: InstrumentationRegistry.getArguments().getString("targetPackage")
             ?: "net.mm2d.news.aioi"
@@ -42,14 +45,8 @@ class BaselineProfileGenerator {
             device.wait(Until.hasObject(By.text("新着情報")), TIMEOUT_MS)
 
             // 2. 新着情報一覧（LazyColumn）のスクロール
-            val whatsNewList = device.findObject(By.scrollable(true))
-            if (whatsNewList != null) {
-                whatsNewList.setGestureMargin(device.displayWidth / 5)
-                whatsNewList.fling(Direction.DOWN)
-                device.waitForIdle()
-                whatsNewList.fling(Direction.UP)
-                device.waitForIdle()
-            }
+            device.flingList("whats_new_list", Direction.DOWN)
+            device.flingList("whats_new_list", Direction.UP)
 
             // 3. ボトムナビゲーションで「リンク集」タブに切り替え
             val linksTab = device.findObject(By.text("リンク集"))
@@ -58,14 +55,8 @@ class BaselineProfileGenerator {
                 device.waitForIdle()
 
                 // リンク集一覧（LazyColumn）のスクロール
-                val linksList = device.findObject(By.scrollable(true))
-                if (linksList != null) {
-                    linksList.setGestureMargin(device.displayWidth / 5)
-                    linksList.fling(Direction.DOWN)
-                    device.waitForIdle()
-                    linksList.fling(Direction.UP)
-                    device.waitForIdle()
-                }
+                device.flingList("links_list", Direction.DOWN)
+                device.flingList("links_list", Direction.UP)
             }
 
             // 4. 「新着情報」タブに戻る
@@ -98,6 +89,32 @@ class BaselineProfileGenerator {
                 device.waitForIdle()
             }
         }
+    }
+
+    private fun UiDevice.flingList(
+        resourceName: String,
+        direction: Direction,
+    ) {
+        // Pagerの遷移やComposeの更新で無効になった要素は、待機時間内で再取得する。
+        val completed = wait(
+            { device ->
+                try {
+                    val list = device.findObject(By.res(resourceName))
+                    if (list == null) {
+                        false
+                    } else {
+                        list.setGestureMargin(device.displayWidth / 5)
+                        list.fling(direction)
+                        true
+                    }
+                } catch (_: StaleObjectException) {
+                    false
+                }
+            },
+            TIMEOUT_MS,
+        )
+        check(completed) { "一覧をスクロールできませんでした: $resourceName ($direction)" }
+        waitForIdle()
     }
 
     companion object {
