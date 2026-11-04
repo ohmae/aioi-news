@@ -72,6 +72,12 @@ room {
     generateKotlin = true
 }
 
+androidComponents {
+    beforeVariants { variantBuilder ->
+        (variantBuilder as? com.android.build.api.variant.HasUnitTestBuilder)?.enableUnitTest = true
+    }
+}
+
 dependencies {
     coreLibraryDesugaring(libs.desugarJdkLibs)
 
