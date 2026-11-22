@@ -22,7 +22,9 @@ val versionPatch = 2
 android {
     namespace = "net.mm2d.news.aioi"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 2
+        }
     }
 
     defaultConfig {
